@@ -50,3 +50,9 @@ int generic_swap(void* value_1, void* value_2, int size){
   free(temp);
   return 0;
 }
+
+const char* construct_Path(const char* FileName, const char* DirName){
+  char* File_Path = (char*)malloc(sizeof(char)*(strlen(FileName)+strlen(DirName)+2));
+  sprintf(File_Path,"%s/%s",DirName,FileName);
+  return File_Path;
+}
