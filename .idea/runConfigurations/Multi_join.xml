@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Multi_join" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="file://$PROJECT_DIR$/Source" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Multi_join" TARGET_NAME="Multi_join" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Multi_join" RUN_TARGET_NAME="Multi_join">
+  <configuration default="false" name="Multi_join" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-i ./workload_small/small.init -w ./workload_small/small.work" WORKING_DIR="file://$PROJECT_DIR$/Source" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Multi_join" TARGET_NAME="Multi_join" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Multi_join" RUN_TARGET_NAME="Multi_join">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>
