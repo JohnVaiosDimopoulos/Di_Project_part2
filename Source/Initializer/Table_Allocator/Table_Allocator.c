@@ -19,7 +19,7 @@ void Delete_Table_Allocator(Table_AllocatorPtr Table_Allocator){
   free(Table_Allocator);
 }
 
-static int  Count_File_Lines(const FILE *FilePtr) {
+static int  Count_File_Lines(FILE *FilePtr) {
   int num_of_lines;
   for(int c = getc(FilePtr);; c=getc(FilePtr)){
     if (c == '\n')
