@@ -19,5 +19,6 @@ int main(int argc, char** argv){
   Delete_ArgManager(Manager);
   Delete_Argument_Data(Arg_Data);
   Delete_Table_Allocator(Table_Allocator);
+  Delete_Table(Table);
 }
 

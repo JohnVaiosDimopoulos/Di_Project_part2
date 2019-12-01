@@ -17,9 +17,7 @@ Table_Ptr Create_Table(Table_AllocatorPtr);
 int Get_Table_Data(Table_Ptr);
 void Delete_Table(Table_Ptr);
 
-//struct Shell Create_Shell(Table_Ptr, const char*);
-Shell_Ptr Create_Shell(Table_Ptr, const char*);
-
+Shell_Ptr Create_Shell(const char*);
 void Delete_Shell(Shell_Ptr);
 
 
