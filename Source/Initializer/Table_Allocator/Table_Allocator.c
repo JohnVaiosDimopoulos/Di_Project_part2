@@ -1,9 +1,6 @@
 #include "Table_Allocator.h"
 #include <stdlib.h>
-#include <fcntl.h>
 #include "../../Util/Utilities.h"
-#include <unistd.h>
-
 
 struct Table_Allocator{
   char* Init_Filename;
@@ -16,7 +13,7 @@ struct Table {
 };
 
 struct Shell {
-  uint64_t id;
+  //uint64_t id;
   uint64_t num_of_tuples;
   uint64_t num_of_columns;
   int **Array;
@@ -76,10 +73,10 @@ Table_Ptr Create_Table(Table_AllocatorPtr Table_Allocator){
 
   char file[5];
   for(int i = 0; i < Table->num_of_shells; i++) {
-      fscanf(fp, "%s", file);
-      const char *filename = construct_Path(file, Table_Allocator->Dir_Name);
-      Table->Array = Create_Shell(Table, filename);
-      Table->Array++;
+    fscanf(fp, "%s", file);
+    const char *filename = construct_Path(file, Table_Allocator->Dir_Name);
+    Table->Array = Create_Shell(Table, filename);
+    Table->Array++;
   }
   fclose(fp);
 
@@ -87,7 +84,7 @@ Table_Ptr Create_Table(Table_AllocatorPtr Table_Allocator){
 }
 
 int Get_Table_Data(Table_Ptr Table){
-    return Table->Array->num_of_tuples;
+  return Table->Array->num_of_tuples;
 }
 
 void Delete_Table(Table_Ptr Table){
@@ -95,29 +92,37 @@ void Delete_Table(Table_Ptr Table){
   free(Table);
 }
 
-//struct Shell Create_Shell(Table_Ptr Table, const char *filename) {
-Shell_Ptr Create_Shell(Table_Ptr Table, const char *filename) {
-  Shell_Ptr Shell = malloc(sizeof(struct Shell));
-
+void Fill_Shell(Shell_Ptr Shell, const char *filename) {
   printf("FILE = %s\n", filename);
   FILE* fp = fopen (filename, "rb");
+
+  fseek(fp, 0, SEEK_END);
+  long lSize = ftell(fp);
+  // go back to the beginning of the file
+  rewind(fp);
+  printf("Size found to be %ld Bytes\n",lSize);
 
   if(fread(Shell, sizeof(struct Shell), 1, fp) <0 ) {
       printf("error in open\n");
       exit(1);
   }
-  printf("%llu, %llu, %llu\n", Shell->id, Shell->num_of_tuples, Shell->num_of_columns);
+  printf("%llu, %llu\n", /*Shell->id,*/ Shell->num_of_tuples, Shell->num_of_columns);
   fclose(fp);
+}
 
+Shell_Ptr Create_Shell(Table_Ptr Table, const char *filename) {
+  Shell_Ptr Shell = malloc(sizeof(struct Shell));
+
+  Fill_Shell(Shell, filename);
   return Shell;
 }
 
-void Delete_Shell(Shell_Ptr Shell){
-   for(int i = 0; i < Shell->num_of_columns; i++) {
-//       free(Shell->Array[i]);
-   }
-//    free(Shell->Array);
-    free(Shell);
+void Delete_Shell(Shell_Ptr Shell) {
+  for(int i = 0; i < Shell->num_of_columns; i++)
+    free(Shell->Array[i]);
+
+  free(Shell->Array);
+  free(Shell);
 }
 
 //const char* Get_Table_FileName(Table_AllocatorPtr Table){
