@@ -16,8 +16,9 @@ struct Table {
 };
 
 struct Shell {
-  int num_of_tuples;
-  int num_of_columns;
+  uint64_t id;
+  uint64_t num_of_tuples;
+  uint64_t num_of_columns;
   int **Array;
 };
 
@@ -66,8 +67,21 @@ Table_Ptr Create_Table(Table_AllocatorPtr Table_Allocator){
 
   Table_Ptr Table = (Table_Ptr)malloc(sizeof(struct Table));
   Table->num_of_shells = num_of_tables;
-  for(int i = 0; i < Table->num_of_shells; i++)
-    Table->Array = Create_Shell(Table, Table_Allocator);
+
+  const char *path = construct_Path(Table_Allocator->Init_Filename, Table_Allocator->Dir_Name);
+  printf("\nname = %s\n" , path);
+
+  FILE *fp = fopen(path, "r");
+  Open_File_for_Read(&fp, path);
+
+  char file[5];
+  for(int i = 0; i < Table->num_of_shells; i++) {
+      fscanf(fp, "%s", file);
+      const char *filename = construct_Path(file, Table_Allocator->Dir_Name);
+      Table->Array = Create_Shell(Table, filename);
+      Table->Array++;
+  }
+  fclose(fp);
 
   return Table;
 }
@@ -81,34 +95,28 @@ void Delete_Table(Table_Ptr Table){
   free(Table);
 }
 
-
-
-
-Shell_Ptr Create_Shell(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
-  //printf("create\n");
+//struct Shell Create_Shell(Table_Ptr Table, const char *filename) {
+Shell_Ptr Create_Shell(Table_Ptr Table, const char *filename) {
   Shell_Ptr Shell = malloc(sizeof(struct Shell));
-  const char *name = construct_Path(Table_Allocator->Init_Filename, Table_Allocator->Dir_Name);
 
-  printf("\n%s\n" ,name);
-  int fd = open (name, O_RDONLY);
-  int num;
-  if(read(fd, &num, sizeof(int)) < 0) {
+  printf("FILE = %s\n", filename);
+  FILE* fp = fopen (filename, "rb");
+
+  if(fread(Shell, sizeof(struct Shell), 1, fp) <0 ) {
       printf("error in open\n");
       exit(1);
   }
-  printf("%d\n", num);
-  close(fd);
+  printf("%llu, %llu, %llu\n", Shell->id, Shell->num_of_tuples, Shell->num_of_columns);
+  fclose(fp);
 
-  Shell->num_of_columns = 1;
-  Shell->num_of_tuples = 2;
   return Shell;
 }
 
 void Delete_Shell(Shell_Ptr Shell){
    for(int i = 0; i < Shell->num_of_columns; i++) {
-       free(Shell->Array[i]);
+//       free(Shell->Array[i]);
    }
-    free(Shell->Array);
+//    free(Shell->Array);
     free(Shell);
 }
 
