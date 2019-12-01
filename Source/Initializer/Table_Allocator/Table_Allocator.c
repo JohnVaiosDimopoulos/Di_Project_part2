@@ -1,6 +1,9 @@
 #include "Table_Allocator.h"
 #include <stdlib.h>
+#include <fcntl.h>
 #include "../../Util/Utilities.h"
+#include <unistd.h>
+
 
 struct Table_Allocator{
   char* Init_Filename;
@@ -61,16 +64,52 @@ Table_Ptr Create_Table(Table_AllocatorPtr Table_Allocator){
   int num_of_tables = Get_num_of_Tables(Table_Allocator);
   printf("num of tables = %d\n", num_of_tables);
 
-  Table_Ptr Table = (Table_Ptr)malloc(sizeof(Table));
-  Table->Array = malloc(num_of_tables * sizeof(struct Shell));
+  Table_Ptr Table = (Table_Ptr)malloc(sizeof(struct Table));
   Table->num_of_shells = num_of_tables;
+  for(int i = 0; i < Table->num_of_shells; i++)
+    Table->Array = Create_Shell(Table, Table_Allocator);
 
   return Table;
+}
+
+int Get_Table_Data(Table_Ptr Table){
+    return Table->Array->num_of_tuples;
 }
 
 void Delete_Table(Table_Ptr Table){
   free(Table->Array);
   free(Table);
+}
+
+
+
+
+Shell_Ptr Create_Shell(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
+  //printf("create\n");
+  Shell_Ptr Shell = malloc(sizeof(struct Shell));
+  const char *name = construct_Path(Table_Allocator->Init_Filename, Table_Allocator->Dir_Name);
+
+  printf("\n%s\n" ,name);
+  int fd = open (name, O_RDONLY);
+  int num;
+  if(read(fd, &num, sizeof(int)) < 0) {
+      printf("error in open\n");
+      exit(1);
+  }
+  printf("%d\n", num);
+  close(fd);
+
+  Shell->num_of_columns = 1;
+  Shell->num_of_tuples = 2;
+  return Shell;
+}
+
+void Delete_Shell(Shell_Ptr Shell){
+   for(int i = 0; i < Shell->num_of_columns; i++) {
+       free(Shell->Array[i]);
+   }
+    free(Shell->Array);
+    free(Shell);
 }
 
 //const char* Get_Table_FileName(Table_AllocatorPtr Table){
@@ -80,4 +119,3 @@ void Delete_Table(Table_Ptr Table){
 //const char* Get_Table_DirName(Table_AllocatorPtr Table){
 //  return Table->Dir_Name;
 //}
-

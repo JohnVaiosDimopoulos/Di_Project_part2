@@ -11,8 +11,10 @@ int main(int argc, char** argv){
 
   Table_AllocatorPtr Table_Allocator = Create_Table_Allocator(Arg_Data);
   Table_Ptr Table = Create_Table(Table_Allocator);
-  
+
  // printf("\n Dir:%s \n Init:%s\n", Get_Table_DirName(Table), Get_Table_FileName(Table));
+ // printf("\n %d\n", Get_Table_Data(Table));
+
 
   Delete_ArgManager(Manager);
   Delete_Argument_Data(Arg_Data);
