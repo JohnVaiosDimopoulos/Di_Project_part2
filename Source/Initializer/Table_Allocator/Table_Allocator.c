@@ -13,7 +13,6 @@ struct Table {
 };
 
 struct Shell {
-  //uint64_t id;
   uint64_t num_of_tuples;
   uint64_t num_of_columns;
   int **Array;
