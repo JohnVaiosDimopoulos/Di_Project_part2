@@ -1,1 +1,1 @@
-./main -i small.init -w work -d workload_small && make clean
+./main -d ./workload_small -i small.init -w small.work && make clean
