@@ -68,24 +68,41 @@ Table_Ptr Allocate_Table(Table_AllocatorPtr Table_Allocator){
 
 static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
   //1.open file
-  //2.read num_of_tuples and num_of_columns
-}
+  FILE* Table_File;
+  if(Open_File_for_Read(&Table_File,FileName)){
+    //2.read num_of_tuples and num_of_columns
 
-void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator){
-
-  //1.open init file
-  //2.read line by line
-  //4.for each shell call a Fill_Shell
-
+  }
 }
 
 
+void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
 
+  FILE *Init_File;
+  char *line_buffer = NULL;
+  char *file_Name = NULL;
+  size_t line_buffer_size = 0;
 
-void Delete_Table(Table_Ptr Table){
-  free(Table->Array);
-  free(Table);
+  //1.construct initFilePath
+  const char *Init_File_Path = construct_Path(Table_Allocator->Init_Filename, Table_Allocator->Dir_Name);
+  //2.open init file
+  if (Open_File_for_Read(&Init_File, Init_File_Path)) {
+    //3.read line by line
+    for (int i = 0; i < Table->num_of_shells; i++) {
+      int read = getline(&line_buffer, &line_buffer_size, Init_File);
+      sscanf(line_buffer, "%s", &file_Name);
+      char *file_Path = construct_Path(file_Name, Table_Allocator->Dir_Name);
+      Fill_Shell(file_Path, &Table->Array[i]);
+      free(file_Path);
+      free(file_Name);
+    }
+  }
 }
+
+  void Delete_Table(Table_Ptr Table) {
+    free(Table->Array);
+    free(Table);
+  }
 
 //const char* Get_Table_FileName(Table_AllocatorPtr Table){
 //  return Table->Init_Filename;
