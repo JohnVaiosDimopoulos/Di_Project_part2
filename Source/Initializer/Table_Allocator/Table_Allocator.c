@@ -77,8 +77,8 @@ static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
   //1.open file
   FILE* Table_File;
   if(Open_File_for_Read(&Table_File,FileName)){
-    u_int64_t num_of_columns=0;
-    u_int64_t num_of_row=0;
+    uint64_t num_of_columns=0;
+    uint64_t num_of_row=0;
     //2.read num_of_tuples and num_of_columns
     //doesnt work;
     fscanf(Table_File,"%lu %lu",&num_of_row,&num_of_columns);
