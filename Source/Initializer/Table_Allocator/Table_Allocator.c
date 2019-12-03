@@ -51,9 +51,10 @@ int Get_num_of_Tables(Table_AllocatorPtr Table_Allocator){
 //  printf("\n\n%s\n", Init_File);
   FILE* FilePtr;
   if(Open_File_for_Read(&FilePtr,Init_File)){
-    return Count_File_Lines(FilePtr);
+    int file_lines = Count_File_Lines(FilePtr);
+    free(Init_File);
+    return file_lines;
   }
-  return -1;
 }
 
 
@@ -66,12 +67,22 @@ Table_Ptr Allocate_Table(Table_AllocatorPtr Table_Allocator){
   return Table;
 }
 
+static char* Get_File_Name(char* line_buffer,int size){
+  char* file_Name = malloc(sizeof(char)*size);
+  sscanf(line_buffer, "%s\n", file_Name);
+  return file_Name;
+}
+
 static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
   //1.open file
   FILE* Table_File;
   if(Open_File_for_Read(&Table_File,FileName)){
+    u_int64_t num_of_columns=0;
+    u_int64_t num_of_row=0;
     //2.read num_of_tuples and num_of_columns
-
+    //doesnt work;
+    fscanf(Table_File,"%lu %lu",&num_of_row,&num_of_columns);
+    printf("%lu,%lu\n",num_of_row,num_of_columns);
   }
 }
 
@@ -80,7 +91,6 @@ void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
 
   FILE *Init_File;
   char *line_buffer = NULL;
-  char *file_Name = NULL;
   size_t line_buffer_size = 0;
 
   //1.construct initFilePath
@@ -90,13 +100,16 @@ void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
     //3.read line by line
     for (int i = 0; i < Table->num_of_shells; i++) {
       int read = getline(&line_buffer, &line_buffer_size, Init_File);
-      sscanf(line_buffer, "%s", &file_Name);
-      char *file_Path = construct_Path(file_Name, Table_Allocator->Dir_Name);
+      char* File_Name = Get_File_Name(line_buffer,read);
+      const char *file_Path = construct_Path(File_Name, Table_Allocator->Dir_Name);
+      printf("%s\n",file_Path);
       Fill_Shell(file_Path, &Table->Array[i]);
       free(file_Path);
-      free(file_Name);
+      free(File_Name);
     }
+    free(line_buffer);
   }
+  free(Init_File_Path);
 }
 
   void Delete_Table(Table_Ptr Table) {
