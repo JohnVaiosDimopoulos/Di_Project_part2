@@ -57,16 +57,30 @@ int Get_num_of_Tables(Table_AllocatorPtr Table_Allocator){
 }
 
 
-Table_Ptr Create_Table(Table_AllocatorPtr Table_Allocator){
+Table_Ptr Allocate_Table(Table_AllocatorPtr Table_Allocator){
   int num_of_tables = Get_num_of_Tables(Table_Allocator);
   printf("num of tables = %d\n", num_of_tables);
-
   Table_Ptr Table = (Table_Ptr)malloc(sizeof(Table));
   Table->Array = malloc(num_of_tables * sizeof(struct Shell));
   Table->num_of_shells = num_of_tables;
-
   return Table;
 }
+
+static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
+  //1.open file
+  //2.read num_of_tuples and num_of_columns
+}
+
+void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator){
+
+  //1.open init file
+  //2.read line by line
+  //4.for each shell call a Fill_Shell
+
+}
+
+
+
 
 void Delete_Table(Table_Ptr Table){
   free(Table->Array);

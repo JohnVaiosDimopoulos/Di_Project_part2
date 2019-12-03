@@ -8,7 +8,8 @@ typedef struct Table* Table_Ptr;
 typedef struct Shell* Shell_Ptr;
 
 Table_AllocatorPtr Create_Table_Allocator(Argument_Data_Ptr);
-Table_Ptr Create_Table(Table_AllocatorPtr);
+Table_Ptr Allocate_Table(Table_AllocatorPtr Table_Allocator);
+void Fill_Table(Table_Ptr, Table_AllocatorPtr);
 
 int Get_num_of_Tables(Table_AllocatorPtr);
 //const char* Get_Table_FileName(Table_AllocatorPtr);
