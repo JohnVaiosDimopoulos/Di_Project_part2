@@ -72,7 +72,7 @@ Shell_Ptr Get_Table_Array(Table_Ptr Table) {
 	return Table->Array;
 }
 
-static char* Get_File_Name(char* line_buffer,int size){
+static char* Get_File_Name(char* line_buffer, int size) {
   char* file_Name = malloc(sizeof(char)*size);
   sscanf(line_buffer, "%s\n", file_Name);
   return file_Name;
