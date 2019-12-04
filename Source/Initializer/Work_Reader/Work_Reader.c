@@ -3,21 +3,6 @@
 #include <stdio.h>
 #include "../../Util/Utilities.h"
 
-static int Count_File_Lines(FILE *FilePtr) {
-  int num_of_lines = 0;
-  for(int c = getc(FilePtr);; c=getc(FilePtr)){
-    if (c == '\n')
-      num_of_lines++;
-    if (c == EOF) {
-      num_of_lines++;
-      break;
-    }
-  }
-  rewind(FilePtr);
-  fclose(FilePtr);
-  return num_of_lines;
-}
-
 void Read_Work_File(Argument_Data_Ptr Arg_Data) {
   const char *path = construct_Path(Get_Work_FileName(Arg_Data), Get_Dir_Name(Arg_Data));
   printf("\n\n\t%s\n", path);

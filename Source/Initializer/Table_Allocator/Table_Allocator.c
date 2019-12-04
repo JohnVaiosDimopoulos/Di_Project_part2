@@ -32,21 +32,6 @@ void Delete_Table_Allocator(Table_AllocatorPtr Table_Allocator){
   free(Table_Allocator);
 }
 
-static int Count_File_Lines(FILE *FilePtr) {
-  int num_of_lines = 0;
-  for(int c = getc(FilePtr);; c=getc(FilePtr)){
-    if (c == '\n')
-      num_of_lines++;
-    if (c == EOF) {
-      num_of_lines++;
-      break;
-    }
-  }
-  rewind(FilePtr);
-  fclose(FilePtr);
-  return num_of_lines;
-}
-
 int Get_num_of_Tables(Table_AllocatorPtr Table_Allocator){
   const char* Init_File = construct_Path(Table_Allocator->Init_Filename,Table_Allocator->Dir_Name);
 //  printf("\n\n%s\n", Init_File);

@@ -37,6 +37,20 @@ int Open_File_for_Write(FILE** File_Ptr,const char* File_Name){
 }
 
 
+int Count_File_Lines(FILE *FilePtr) {
+  int num_of_lines = 0;
+  for(int c = getc(FilePtr);; c=getc(FilePtr)){
+    if (c == '\n')
+      num_of_lines++;
+    if (c == EOF) {
+      num_of_lines++;
+      break;
+    }
+  }
+  rewind(FilePtr);
+  fclose(FilePtr);
+  return num_of_lines;
+}
 
 int generic_swap(void* value_1, void* value_2, int size){
   void* temp;
