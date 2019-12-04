@@ -16,6 +16,7 @@ struct Shell {
   uint64_t num_of_tuples;
   uint64_t num_of_columns;
   uint64_t **Array;
+  uint64_t **column_ptr;
 };
 
 Table_AllocatorPtr Create_Table_Allocator(Argument_Data_Ptr Data){
@@ -79,6 +80,7 @@ static char* Get_File_Name(char* line_buffer,int size){
 
 void Print_Shell(Shell_Ptr Shell, FILE *fp) {
   for(int i = 0; i < Shell->num_of_columns; i++) {
+    fprintf(fp," %llu\n", *(Shell->column_ptr[i]));
     for(int j = 0; j < Shell->num_of_tuples; j++) {
       fprintf(fp," %llu ", Shell->Array[i][j]);
     }
@@ -116,7 +118,10 @@ static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
   for(uint64_t i = 0; i < Shell->num_of_columns; i++) {
     Shell->Array[i] = malloc(Shell->num_of_tuples * sizeof(uint64_t));
   }
+
+  Shell->column_ptr = malloc(Shell->num_of_columns * sizeof(uint64_t*));
   for(uint64_t i = 0; i < Shell->num_of_columns; i++) {
+    Shell->column_ptr[i] = Shell->Array[i];
 //    printf("\tcolumn %llu\n\n", i);
     for(uint64_t j = 0; j < Shell->num_of_tuples; j++) {
       if(fread(&Shell->Array[i][j], sizeof(uint64_t), 1, fp) < 0 ) {
