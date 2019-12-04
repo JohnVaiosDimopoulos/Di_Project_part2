@@ -77,25 +77,22 @@ static char* Get_File_Name(char* line_buffer,int size){
   return file_Name;
 }
 
-void Print_Shell(Shell_Ptr Shell) {
-  FILE *fp;
-  if(Open_File_for_Write(&fp, "out.txt")) {
-
-    for(int i = 0; i < Shell->num_of_columns; i++) {
-      for(int j = 0; j < Shell->num_of_tuples; j++) {
-        fprintf(fp," %llu ", Shell->Array[i][j]);
-      }
-      fprintf(fp, "\n");
+void Print_Shell(Shell_Ptr Shell, FILE *fp) {
+  for(int i = 0; i < Shell->num_of_columns; i++) {
+    for(int j = 0; j < Shell->num_of_tuples; j++) {
+      fprintf(fp," %llu ", Shell->Array[i][j]);
     }
+    fprintf(fp, "\n");
   }
 }
 
 void Print_Table(Table_Ptr Table) {
-
-  for(int i = 0; i < Table->num_of_shells; i++) {
-    Print_Shell(&Table->Array[i]);
+  FILE *fp;
+  if(Open_File_for_Write(&fp, "out.txt")) {
+    for(int i = 0; i < Table->num_of_shells; i++) {
+      Print_Shell(&Table->Array[i], fp);
+    }
   }
-
 }
 
 static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
