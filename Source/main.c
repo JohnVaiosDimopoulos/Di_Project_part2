@@ -14,6 +14,7 @@ int main(int argc, char** argv){
   Fill_Table(Table,Table_Allocator);
   
  // printf("\n Dir:%s \n Init:%s\n", Get_Table_DirName(Table), Get_Table_FileName(Table));
+  Print_Shell(Get_Table_Array(Table));
 
   Delete_ArgManager(Manager);
   Delete_Argument_Data(Arg_Data);
