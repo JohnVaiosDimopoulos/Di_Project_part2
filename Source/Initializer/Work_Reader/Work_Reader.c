@@ -4,8 +4,15 @@
 #include <string.h>
 #include "../../Util/Utilities.h"
 
-struct Work{
-  char **Batch;
+struct Batch {
+  char *Relation;
+  char *Predicates;
+  char *Projection;
+};
+
+struct Work {
+  Batch_Ptr Batch;
+  char **Buffer;
   int counter;
   int num_of_batches;
 };
@@ -14,32 +21,84 @@ Work_Ptr Create_Work(int lines) {
   Work_Ptr Work = (Work_Ptr)malloc(sizeof(struct Work));
   Work->num_of_batches = lines;
   Work->counter = 0;
-  Work->Batch = (char**)malloc(lines * sizeof(char*));
+  Work->Buffer = (char**)malloc(lines * sizeof(char*));
+  Work->Batch = (Batch_Ptr)malloc(lines * sizeof(struct Batch));
 
   return Work;
 }
 
+void Tokenizer(char *buffer, Batch_Ptr Batch) {
+  char* temp = Allocate_and_Copy_Str(buffer);
+
+////////////////////////////////////////////
+////////////////////////////////////////////
+  char* token = strtok(temp, "|");
+
+  for(int i = 0; i < 3; i++) {
+    if (token == NULL) break;
+	switch(i) {
+	case 0:
+      Batch->Relation = Allocate_and_Copy_Str(token);
+      break;
+	case 1:
+      Batch->Predicates = Allocate_and_Copy_Str(token);
+      break;
+	case 2:
+      Batch->Projection = Allocate_and_Copy_Str(token);
+      break;
+    }
+//    printf("\t%s\n", token);
+    token = strtok(NULL, "|");
+  }
+////////////////////////////////////////////
+////////////////////////////////////////////
+}
+
 void Insert_Batch(char *buffer, Work_Ptr Work) {
   size_t len = strlen(buffer);
-  Work->Batch[Work->counter] = (char*)malloc(len * sizeof(char));
-  strcpy(Work->Batch[Work->counter], buffer);
+  Work->Buffer[Work->counter] = Allocate_and_Copy_Str(buffer);
+
+  Tokenizer(buffer, Work->Batch);
 //  printf("%s<-buffer\n", Work->Batch[Work->counter]);
 //  printf("len = %ld\n", len);
   Work->counter++;
 }
 
+void Print_Batch(Batch_Ptr Batch) {
+  printf("\t%s\n\t%s\n\t%s\n\n", Batch->Relation, Batch->Predicates, Batch->Projection);
+}
+
 void Print_Work(Work_Ptr Work) {
   printf("\n\n\tPRINT\n");
   for(int i = 0; i < Work->counter; i++) {
-    printf("%s\n", Work->Batch[i]);
+    printf("%s\n", Work->Buffer[i]);
+	Print_Batch(&(Work->Batch[i]));
   }
 }
 
-void Delete_Work(Work_Ptr Work) {
-  for(int i = 0; i < Work->counter; i++)
-    free(Work->Batch[i]);
+void Delete_Batch(Batch_Ptr Batch, int counter) {
+ // for(int i = 0; i < counter; i++) {
+ //   free(Batch[i].Relation);
+ //   free(Batch[i].Predicates);
+ //   free(Batch[i].Projection);
+ // }
 
+  free(Batch->Relation);
+  free(Batch->Predicates);
+  free(Batch->Projection);
+
+//  free(Batch);
+}
+
+void Delete_Work(Work_Ptr Work) {
+  for(int i = 0; i < Work->counter; i++) {
+    free(Work->Buffer[i]);
+  }
+  free(Work->Buffer);
+
+  Delete_Batch(Work->Batch, Work->counter);
   free(Work->Batch);
+
   free(Work);
 }
 
@@ -61,11 +120,11 @@ Work_Ptr Read_Work_File(Argument_Data_Ptr Arg_Data) {
 
   Open_File_for_Read(&fp, path);
 
-  for(int i = 0; i < lines; i++) {
+  for(int i = 0; i < 8; i++) {
     int read = getline(&line_buffer, &line_buffer_size, fp);
     char* command = malloc(sizeof(char) * line_buffer_size);
     sprintf(command, "%s", line_buffer);
-//    printf("%s", command);
+//    printf("%s\n", command);
 
     Insert_Batch(command, Work);
     free(command);
@@ -74,16 +133,4 @@ Work_Ptr Read_Work_File(Argument_Data_Ptr Arg_Data) {
   fclose(fp);
 
   return Work;
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-//	char* token = strtok(command, "|");
-//
-//    // Keep printing tokens while one of the
-//    // delimiters present in str[].
-//    while (token != NULL) {
-//        printf("%s\n", token);
-//        token = strtok(NULL, "|");
-//    }
-//////////////////////////////////////////////
-//////////////////////////////////////////////
 }
