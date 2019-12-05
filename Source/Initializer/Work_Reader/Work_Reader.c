@@ -50,6 +50,7 @@ void Tokenizer(char *buffer, Batch_Ptr Batch) {
 //    printf("\t%s\n", token);
     token = strtok(NULL, "|");
   }
+  free(temp);
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 }
@@ -123,6 +124,8 @@ Work_Ptr Read_Work_File(Argument_Data_Ptr Arg_Data) {
     free(command);
   }
   Print_Work(Work);
+  free(line_buffer);
+  free(path);
   fclose(fp);
 
   return Work;

@@ -23,7 +23,6 @@ int Get_num_of_Tables(Table_AllocatorPtr);
 
 void Delete_Table_Allocator(Table_AllocatorPtr);
 void Delete_Table(Table_Ptr);
-void Delete_Shell(Shell_Ptr);
 
 
 #endif //MULTI_JOIN_TABLE_ALLOCATOR_H
