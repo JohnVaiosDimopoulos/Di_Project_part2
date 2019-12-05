@@ -75,7 +75,7 @@ void Print_Shell(Shell_Ptr Shell, FILE *fp) {
 
 void Print_Table(Table_Ptr Table) {
   FILE *fp;
-  if(Open_File_for_Write(&fp, "out.txt")) {
+  if(Open_File_for_Write(&fp, "data.txt")) {
     for(int i = 0; i < Table->num_of_shells; i++) {
       Print_Shell(&Table->Array[i], fp);
     }

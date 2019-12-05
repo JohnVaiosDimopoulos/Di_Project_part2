@@ -18,11 +18,12 @@ int main(int argc, char** argv){
  // printf("\n Dir:%s \n Init:%s\n", Get_Table_DirName(Table), Get_Table_FileName(Table));
   Print_Table(Table);
 
-  Read_Work_File(Arg_Data);
+  Work_Ptr Work = Read_Work_File(Arg_Data);
 
   Delete_ArgManager(Manager);
   Delete_Argument_Data(Arg_Data);
-  Delete_Table(Table);
   Delete_Table_Allocator(Table_Allocator);
+  Delete_Table(Table);
+  Delete_Work(Work);
 }
 
