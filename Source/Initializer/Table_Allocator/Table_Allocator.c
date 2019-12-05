@@ -31,14 +31,13 @@ void Delete_Table_Allocator(Table_AllocatorPtr Table_Allocator){
   free(Table_Allocator);
 }
 
-int Get_num_of_Tables(Table_AllocatorPtr Table_Allocator){
+static int Get_num_of_Tables(Table_AllocatorPtr Table_Allocator){
   const char* Init_File = construct_Path(Table_Allocator->Init_Filename,Table_Allocator->Dir_Name);
   FILE* FilePtr;
   Open_File_for_Read(&FilePtr,Init_File);
   int file_lines = Count_File_Lines(FilePtr);
   free(Init_File);
   return file_lines;
-
 }
 
 Table_Ptr Allocate_Table(Table_AllocatorPtr Table_Allocator){
@@ -60,7 +59,7 @@ static char* Get_File_Name(char* line_buffer, int size) {
   return file_Name;
 }
 
-void Print_Shell(Shell_Ptr Shell, FILE *fp) {
+static void Print_Shell(Shell_Ptr Shell, FILE *fp) {
   for(int i =0;i<Shell->num_of_tuples;i++){
     for(int j =0;j<Shell->num_of_columns;j++)
       fprintf(fp, "%llu|", Shell->Array[j][i]);
@@ -76,46 +75,50 @@ void Print_Table(Table_Ptr Table) {
     Print_Shell(&Table->Array[i], fp);
     fprintf(fp,"================\n\n\n");
   }
-
 }
 
-static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
-  printf("\nFILE = %s\n", FileName);
-  
-  //1. open file
-  FILE* fp = fopen (FileName, "rb");
-
-  //2. read num_of_tuples and num_of_columns
-  if(fread(&Shell->num_of_tuples, sizeof(uint64_t), 1, fp) < 0) {
-    printf("error in open\n"); exit(1);
-  }
-  if(fread(&Shell->num_of_columns, sizeof(uint64_t), 1, fp) < 0) {
-    printf("error in open\n"); exit(1);
-  }
-
-  printf("%llu, %llu\n", Shell->num_of_tuples, Shell->num_of_columns);
-
-  //3. Allocate Space
+static void Allocate_Shell(Shell_Ptr Shell){
   Shell->Array = malloc(Shell->num_of_columns * sizeof(uint64_t*));
   Shell->Array[0]=malloc((Shell->num_of_columns*Shell->num_of_tuples)* sizeof(uint64_t));
+}
 
+static void Read_from_File(uint64_t* data ,FILE* fp){
 
-  //4.Read Data
-  for(int i = 0; i < Shell->num_of_columns*Shell->num_of_tuples; i++) {
-    if(fread(&Shell->Array[0][i], sizeof(uint64_t), 1, fp) < 0 ) {
-      printf("error in open\n"); exit(1);
-    }
+  if(fread(data, sizeof(uint64_t), 1, fp) < 0) {
+    printf("error in open\n"); exit(1);
   }
+}
 
-  //set up column pointers
+static void Read_Data(Shell_Ptr Shell,FILE* fp){
+  for(int i = 0; i < Shell->num_of_columns*Shell->num_of_tuples; i++) {
+    Read_from_File(&Shell->Array[0][i],fp);
+  }
+}
+
+static void Setup_Column_Pointers(Shell_Ptr Shell){
   int last_index = 0;
   for(int i =1;i<Shell->num_of_columns;i++){
     Shell->Array[i]=&Shell->Array[0][last_index+Shell->num_of_tuples];
     last_index+=Shell->num_of_tuples;
   }
+}
 
+static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
+
+  //1. open file
+  FILE* fp = fopen (FileName, "rb");
+  //2. read num_of_tuples and num_of_columns
+  Read_from_File(&Shell->num_of_tuples,fp);
+  Read_from_File(&Shell->num_of_columns,fp);
+  //3. Allocate Space
+  Allocate_Shell(Shell);
+  //4.Read Data
+  Read_Data(Shell,fp);
+  //set up column pointers
+  Setup_Column_Pointers(Shell);
   fclose(fp);
 }
+
 
 void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
 
@@ -128,6 +131,7 @@ void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
   //2.open init file
   Open_File_for_Read(&Init_File, Init_File_Path);
   //3.read line by line
+
   for (int i = 0; i < Table->num_of_shells; i++) {
     int read = getline(&line_buffer, &line_buffer_size, Init_File);
     char* File_Name = Get_File_Name(line_buffer,read);
@@ -151,12 +155,4 @@ void Delete_Table(Table_Ptr Table) {
   free(Table->Array);
   free(Table);
 }
-
-//const char* Get_Table_FileName(Table_AllocatorPtr Table){
-//  return Table->Init_Filename;
-//}
-//
-//const char* Get_Table_DirName(Table_AllocatorPtr Table){
-//  return Table->Dir_Name;
-//}
 
