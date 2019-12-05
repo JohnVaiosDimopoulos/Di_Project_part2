@@ -58,7 +58,7 @@ void Insert_Batch(char *buffer, Work_Ptr Work) {
   size_t len = strlen(buffer);
   Work->Buffer[Work->counter] = Allocate_and_Copy_Str(buffer);
 
-  Tokenizer(buffer, Work->Batch);
+  Tokenizer(buffer, &(Work->Batch[Work->counter]));
 //  printf("%s<-buffer\n", Work->Batch[Work->counter]);
 //  printf("len = %ld\n", len);
   Work->counter++;
@@ -77,17 +77,13 @@ void Print_Work(Work_Ptr Work) {
 }
 
 void Delete_Batch(Batch_Ptr Batch, int counter) {
- // for(int i = 0; i < counter; i++) {
- //   free(Batch[i].Relation);
- //   free(Batch[i].Predicates);
- //   free(Batch[i].Projection);
- // }
+  for(int i = 0; i < counter; i++) {
+    free(Batch[i].Relation);
+    free(Batch[i].Predicates);
+    free(Batch[i].Projection);
+  }
 
-  free(Batch->Relation);
-  free(Batch->Predicates);
-  free(Batch->Projection);
-
-//  free(Batch);
+  free(Batch);
 }
 
 void Delete_Work(Work_Ptr Work) {
@@ -95,10 +91,7 @@ void Delete_Work(Work_Ptr Work) {
     free(Work->Buffer[i]);
   }
   free(Work->Buffer);
-
   Delete_Batch(Work->Batch, Work->counter);
-  free(Work->Batch);
-
   free(Work);
 }
 
