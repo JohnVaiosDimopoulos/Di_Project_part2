@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void Read_Work_File(Argument_Data_Ptr);
+typedef struct Work* Work_Ptr;
+typedef struct Batch* Batch_Ptr;
+
+Work_Ptr Read_Work_File(Argument_Data_Ptr);
+void Delete_Work(Work_Ptr);
 
 #endif

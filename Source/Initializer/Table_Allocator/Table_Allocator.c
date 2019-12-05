@@ -75,7 +75,7 @@ void Print_Shell(Shell_Ptr Shell, FILE *fp) {
 
 void Print_Table(Table_Ptr Table) {
   FILE *fp;
-  if(Open_File_for_Write(&fp, "out.txt")) {
+  if(Open_File_for_Write(&fp, "data.txt")) {
     for(int i = 0; i < Table->num_of_shells; i++) {
       Print_Shell(&Table->Array[i], fp);
     }
@@ -116,17 +116,6 @@ static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
   }
 
   fclose(fp);
-
-//  //1.open file
-//  FILE* Table_File;
-//  if(Open_File_for_Read(&Table_File,FileName)){
-//    u_int64_t num_of_columns=0;
-//    u_int64_t num_of_row=0;
-//    //2.read num_of_tuples and num_of_columns
-//    //doesnt work;
-//    fscanf(Table_File,"%llu %llu",&num_of_row,&num_of_columns);
-//    printf("%llu, %llu\n",num_of_row,num_of_columns);
-//  }
 }
 
 void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
