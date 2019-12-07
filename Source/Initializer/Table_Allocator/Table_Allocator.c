@@ -42,7 +42,6 @@ static int Get_num_of_Tables(Table_AllocatorPtr Table_Allocator){
 
 Table_Ptr Allocate_Table(Table_AllocatorPtr Table_Allocator){
   int num_of_tables = Get_num_of_Tables(Table_Allocator);
-  printf("num of tables = %d\n", num_of_tables);
   Table_Ptr Table = (Table_Ptr)malloc(sizeof(Table));
   Table->Array = malloc(num_of_tables * sizeof(struct Shell));
   Table->num_of_shells = num_of_tables;
