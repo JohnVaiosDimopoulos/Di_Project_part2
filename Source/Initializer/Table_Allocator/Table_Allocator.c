@@ -60,9 +60,11 @@ static char* Get_File_Name(char* line_buffer, int size) {
 }
 
 static void Print_Shell(Shell_Ptr Shell, FILE *fp) {
+  fprintf(fp, "sizes: %llu %llu\n", Shell->num_of_tuples, Shell->num_of_columns);
   for(int i =0;i<Shell->num_of_tuples;i++){
-    for(int j =0;j<Shell->num_of_columns;j++)
+    for(int j =0;j<Shell->num_of_columns;j++) {
       fprintf(fp, "%llu|", Shell->Array[j][i]);
+	}
     fprintf(fp,"\n");
   }
 }
