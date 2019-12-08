@@ -95,12 +95,9 @@ Work_Ptr Read_Work_File(Argument_Data_Ptr Arg_Data) {
   Open_File_for_Read(&fp, path);
 
   int lines = Count_File_Lines(fp);
-
   char *line_buffer = NULL;
   size_t line_buffer_size = 0;
-
   Work_Ptr Work = Create_Work(lines);
-
   Open_File_for_Read(&fp, path);
 
   for(int i = 0; i < 8; i++) {

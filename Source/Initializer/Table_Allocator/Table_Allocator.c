@@ -12,6 +12,8 @@ struct Table {
   int num_of_shells;
 };
 
+
+
 struct Shell {
   uint64_t num_of_tuples;
   uint64_t num_of_columns;
