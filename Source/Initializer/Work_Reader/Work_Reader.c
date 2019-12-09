@@ -4,114 +4,157 @@
 #include <string.h>
 #include "../../Util/Utilities.h"
 
-struct Batch {
+struct Query {
   char *Relation;
   char *Predicates;
   char *Projection;
+
+  Query_Ptr next;
 };
 
-struct Work {
-  Batch_Ptr Batch;
-  char **Buffer;
+struct Batch {
+  Query_Ptr Queries;
+  Query_Ptr Last;
   int counter;
-  int num_of_batches;
 };
 
-static Work_Ptr Create_Work(int lines) {
-  Work_Ptr Work = (Work_Ptr)malloc(sizeof(struct Work));
-  Work->num_of_batches = lines;
-  Work->counter = 0;
-  Work->Buffer = (char**)malloc(lines * sizeof(char*));
-  Work->Batch = (Batch_Ptr)malloc(lines * sizeof(struct Batch));
-  return Work;
+static Batch_Ptr Create_Batch() {
+  Batch_Ptr Batch = (Batch_Ptr)malloc(sizeof(struct Batch));
+  Batch->counter = 0;
+  Batch->Queries = NULL;
+  Batch->Last = NULL;
+  printf("=================New Batch ===================\n\n");
+  return Batch;
 }
 
-static void Tokenizer(char *buffer, Batch_Ptr Batch) {
+static Query_Ptr New_Query(char *buffer) {
+  Query_Ptr Query = (Query_Ptr)malloc(sizeof(struct Query));
+  Query->next = NULL;
+
   char* temp = Allocate_and_Copy_Str(buffer);
   char* token = strtok(temp, "|");
-
-
   for(int i = 0; i < 3; i++) {
     if (token == NULL) break;
 	switch(i) {
 	case 0:
-      Batch->Relation = Allocate_and_Copy_Str(token);
+      Query->Relation = Allocate_and_Copy_Str(token);
       break;
 	case 1:
-      Batch->Predicates = Allocate_and_Copy_Str(token);
+      Query->Predicates = Allocate_and_Copy_Str(token);
       break;
 	case 2:
-      Batch->Projection = Allocate_and_Copy_Str(token);
+      Query->Projection = Allocate_and_Copy_Str(token);
       break;
     }
     token = strtok(NULL, "|");
   }
   free(temp);
+  
+  return Query;
 }
 
-static void Insert_Batch(char *buffer, Work_Ptr Work) {
+static void Insert_Query(char *buffer, Batch_Ptr Batch) {
   size_t len = strlen(buffer);
-  Work->Buffer[Work->counter] = Allocate_and_Copy_Str(buffer);
-  Tokenizer(buffer, &(Work->Batch[Work->counter]));
-  Work->counter++;
+  //if list is empty first and last are the same
+  if(Batch->counter == 0) {
+    Batch->Queries = New_Query(buffer);
+	Batch->Last = Batch->Queries;
+  } else {
+    Query_Ptr pnode = Batch->Last;
+    pnode->next = New_Query(buffer);
+    Batch->Last = pnode->next; 
+  }
+  Batch->counter++;
+//  printf("%s Inserted\n", buffer);
+//  printf("%s \n", Batch->Queries->Relation);
+//  printf("%s Inserted\n", Batch->Last->Relation);
+}
+
+static void Print_Query(Query_Ptr Query) {
+  printf("\t%s\n\t%s\n\t%s\n", Query->Relation, Query->Predicates, Query->Projection);
 }
 
 static void Print_Batch(Batch_Ptr Batch) {
-  printf("\t%s\n\t%s\n\t%s\n\n", Batch->Relation, Batch->Predicates, Batch->Projection);
-}
-
-static void Print_Work(Work_Ptr Work) {
-  printf("\n\n\tPRINT\n");
-  for(int i = 0; i < Work->counter; i++) {
-    printf("%s\n", Work->Buffer[i]);
-	Print_Batch(&(Work->Batch[i]));
+  printf("\n\tPRINT\n");
+  Query_Ptr pnode = Batch->Queries;
+  for(int i = 0; i < Batch->counter; i++) {
+	Print_Query(pnode);
+	pnode = pnode->next;
   }
+  printf("\n");
 }
 
-static void Delete_Batch(Batch_Ptr Batch, int counter) {
-  for(int i = 0; i < counter; i++) {
-    free(Batch[i].Relation);
-    free(Batch[i].Predicates);
-    free(Batch[i].Projection);
+static void Delete_Query(Query_Ptr Query) {
+  free(Query->Relation);
+  free(Query->Predicates);
+  free(Query->Projection);
+}
+
+void Delete_Batch(Batch_Ptr Batch) {
+  Query_Ptr node = Batch->Queries;
+  Query_Ptr temp = node;
+  for(int i = 0; i < Batch->counter; i++) {
+    Delete_Query(node);
+
+    node = node->next;
+	free(temp);
+	temp = node;
   }
 
   free(Batch);
 }
 
-void Delete_Work(Work_Ptr Work) {
-  for(int i = 0; i < Work->counter; i++) {
-    free(Work->Buffer[i]);
+Batch_Ptr Read_next_Batch(FILE *fp) {
+  char *line_buffer = NULL;
+  size_t line_buffer_size = 0;
+  Batch_Ptr Batch = Create_Batch();
+
+  //read batch line by line
+  while(1) {
+    int read = getline(&line_buffer, &line_buffer_size, fp);
+    printf("%s\n", line_buffer);
+
+	if(!strcmp(line_buffer, "F\n")) {printf("F found\n"); break;}
+
+    char* command = malloc(sizeof(char) * line_buffer_size);
+    sprintf(command, "%s", line_buffer);
+    Insert_Query(command, Batch);
+    free(command);
   }
-  free(Work->Buffer);
-  Delete_Batch(Work->Batch, Work->counter);
-  free(Work);
+  free(line_buffer);
+
+  Print_Batch(Batch);
+  return Batch;
 }
 
-Work_Ptr Read_Work_File(Argument_Data_Ptr Arg_Data) {
+int Count_Batches(FILE *FilePtr) {
+  int num_of_batches = 0;
+  for(int c = getc(FilePtr);; c=getc(FilePtr)){
+    if (c == 'F')
+      num_of_batches++;
+    if (c == EOF) {
+      break;
+    }
+  }
+  rewind(FilePtr);
+  return num_of_batches;
+}
+
+void Read_Work_File(Argument_Data_Ptr Arg_Data) {
 
   const char *path = construct_Path(Get_Work_FileName(Arg_Data), Get_Dir_Name(Arg_Data));
 
   FILE *fp;
   Open_File_for_Read(&fp, path);
 
-  int lines = Count_File_Lines(fp);
-  char *line_buffer = NULL;
-  size_t line_buffer_size = 0;
-  Work_Ptr Work = Create_Work(lines);
-  Open_File_for_Read(&fp, path);
-
-  for(int i = 0; i < 8; i++) {
-    int read = getline(&line_buffer, &line_buffer_size, fp);
-    char* command = malloc(sizeof(char) * line_buffer_size);
-    sprintf(command, "%s", line_buffer);
-    Insert_Batch(command, Work);
-    free(command);
+  int num_of_batches = Count_Batches(fp);
+  printf("Batches are %d\n\n", num_of_batches);
+  for(int i = 0; i < num_of_batches; i++) {
+    Batch_Ptr Batch = Read_next_Batch(fp);
+	//execute queries...
+    Delete_Batch(Batch);
   }
 
-  Print_Work(Work);
-  free(line_buffer);
   free(path);
   fclose(fp);
-
-  return Work;
 }

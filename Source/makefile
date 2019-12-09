@@ -1,15 +1,19 @@
 CC = gcc
 CFLAGS  = -g -Wall
 
-main: main.o Initializer/Argument_Manager/Argument_Manager.o Initializer/Argument_Data/Arguments_Data.o Initializer/Table_Allocator/Table_Allocator.o Initializer/Work_Reader/Work_Reader.o Util/Utilities.o
-	$(CC) $(CFLAGS) -o main main.o Argument_Manager.o Arguments_Data.o Table_Allocator.o Utilities.o Work_Reader.o
+main: main.o Initializer/Argument_Manager/Argument_Manager.o Initializer/Argument_Data/Arguments_Data.o Initializer/Table_Allocator/Table_Allocator.o Initializer/Work_Reader/Work_Reader.o Util/Utilities.o Work_Executor/Work_Executor.o 
+	$(CC) $(CFLAGS) -o main main.o Argument_Manager.o Arguments_Data.o Table_Allocator.o Utilities.o Work_Reader.o Work_Executor.o
 
-main.o: main.c Initializer/Argument_Manager/Argument_Manager.h Initializer/Argument_Data/Arguments_Data.h Initializer/Table_Allocator/Table_Allocator.h Util/Utilities.h Initializer/Work_Reader/Work_Reader.h
+main.o: main.c Initializer/Argument_Manager/Argument_Manager.h Initializer/Argument_Data/Arguments_Data.h Initializer/Table_Allocator/Table_Allocator.h Util/Utilities.h Initializer/Work_Reader/Work_Reader.h Work_Executor/Work_Executor.h
 	$(CC) -c main.c 
 
 
 Util/Utilities.o: Util/Utilities.c Util/Utilities.h
 	$(CC) -c Util/Utilities.c
+
+
+Work_Executor/Work_Executor.o: Work_Executor/Work_Executor.c Work_Executor/Work_Executor.h
+	$(CC) -c Work_Executor/Work_Executor.c
 
 Initializer/Work_Reader/Work_Reader.o: Initializer/Work_Reader/Work_Reader.c Initializer/Work_Reader/Work_Reader.h
 	$(CC) -c Initializer/Work_Reader/Work_Reader.c
