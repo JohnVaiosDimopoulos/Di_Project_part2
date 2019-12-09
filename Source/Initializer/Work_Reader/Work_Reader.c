@@ -100,8 +100,28 @@ void Delete_Batch(Batch_Ptr Batch) {
 	free(temp);
 	temp = node;
   }
-
   free(Batch);
+}
+
+Query_Ptr Remove_Query(Batch_Ptr Batch) {
+  if(Batch->counter == 0) {
+	  printf("LIST IS EMPTY, NO QUERY TO REMOVE\n");
+	  return NULL;
+  }
+  //allocate and copy query
+  Query_Ptr pnode = (Query_Ptr)malloc(sizeof(struct Query));
+  pnode->Relation = Allocate_and_Copy_Str(Batch->Queries->Relation );
+  pnode->Predicates = Allocate_and_Copy_Str(Batch->Queries->Predicates);
+  pnode->Projection = Allocate_and_Copy_Str(Batch->Queries->Projection);
+
+  //free the old one
+  Query_Ptr temp = Batch->Queries;
+  Batch->Queries = Batch->Queries->next;
+  Delete_Query(temp);
+  free(temp);
+
+  Batch->counter--;
+  return pnode;
 }
 
 Batch_Ptr Read_next_Batch(FILE *fp) {
@@ -152,6 +172,9 @@ void Read_Work_File(Argument_Data_Ptr Arg_Data) {
   for(int i = 0; i < num_of_batches; i++) {
     Batch_Ptr Batch = Read_next_Batch(fp);
 	//execute queries...
+	printf("\n\n\nRemoved: %s\n", Remove_Query(Batch)->Relation);
+//    printf("\n\AFTER\n\n");
+//	Print_Batch(Batch);
     Delete_Batch(Batch);
   }
 
