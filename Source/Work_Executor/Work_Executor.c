@@ -9,7 +9,6 @@ void Start_Work(Table_Ptr Relations,Argument_Data_Ptr Arg_Data){
   printf("work: %s\n", path);
   FILE *fp;
   Open_File_for_Read(&fp, path);
-//  Read_Work_File(Arg_Data, Relations);
   Batch_Ptr Current_Batch;
   Query_Ptr Current_Query;
 

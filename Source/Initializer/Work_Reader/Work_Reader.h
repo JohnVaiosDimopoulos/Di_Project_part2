@@ -9,7 +9,6 @@
 typedef struct Batch* Batch_Ptr;
 typedef struct Query* Query_Ptr;
 
-void Read_Work_File(Argument_Data_Ptr, Table_Ptr);
 void Delete_Batch(Batch_Ptr);
 void Delete_Query(Query_Ptr);
 Query_Ptr Pop_Next_Query_from_Batch(Batch_Ptr);

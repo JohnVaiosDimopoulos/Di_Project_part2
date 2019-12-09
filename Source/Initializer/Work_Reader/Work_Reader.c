@@ -162,12 +162,6 @@ int Count_Batches(FILE *FilePtr) {
   return num_of_batches;
 }
 
-void Read_Work_File(Argument_Data_Ptr Arg_Data, Table_Ptr Relations) {
-}
-//int Get_Queries(Batch_Ptr Batch) {
-//  return Batch->counter;
-//}
-
 int Get_num_of_Queries(Batch_Ptr Batch) {
   return Batch->counter;
 }
