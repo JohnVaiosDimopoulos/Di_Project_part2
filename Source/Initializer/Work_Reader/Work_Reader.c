@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "../../Util/Utilities.h"
+#include "../../Query_Executor/Query_Executor.h"
 
 struct Query {
   char *Relation;
@@ -134,7 +135,7 @@ Batch_Ptr Read_next_Batch(FILE *fp) {
     int read = getline(&line_buffer, &line_buffer_size, fp);
     printf("%s\n", line_buffer);
 
-	if(!strcmp(line_buffer, "F\n")) {printf("F found\n"); break;}
+	if(!strcmp(line_buffer, "F\n")) {/*printf("F found\n");*/ break;}
 
     char* command = malloc(sizeof(char) * line_buffer_size);
     sprintf(command, "%s", line_buffer);
@@ -160,7 +161,7 @@ int Count_Batches(FILE *FilePtr) {
   return num_of_batches;
 }
 
-void Read_Work_File(Argument_Data_Ptr Arg_Data) {
+void Read_Work_File(Argument_Data_Ptr Arg_Data, Table_Ptr Relations) {
 
   const char *path = construct_Path(Get_Work_FileName(Arg_Data), Get_Dir_Name(Arg_Data));
 
@@ -172,12 +173,28 @@ void Read_Work_File(Argument_Data_Ptr Arg_Data) {
   for(int i = 0; i < num_of_batches; i++) {
     Batch_Ptr Batch = Read_next_Batch(fp);
 	//execute queries...
-	printf("\n\n\nRemoved: %s\n", Remove_Query(Batch)->Relation);
+    while(Batch->Queries)
+      Execute_Query(Remove_Query(Batch), Relations);
+
+//	  printf("\n\n\nRemoved: %s\n", Remove_Query(Batch)->Relation);
 //    printf("\n\AFTER\n\n");
-//	Print_Batch(Batch);
+//	  Print_Batch(Batch);
+
     Delete_Batch(Batch);
   }
-
   free(path);
   fclose(fp);
+}
+
+int Get_num_of_Queries(Batch_Ptr Batch) {
+  return Batch->counter;
+}
+char* Get_Query_Relations(Query_Ptr Query) {
+  return Query->Relation;
+}
+char* Get_Query_Predicates(Query_Ptr Query) {
+  return Query->Predicates;
+}
+char* Get_Query_Projections(Query_Ptr Query) {
+  return Query->Projection;
 }

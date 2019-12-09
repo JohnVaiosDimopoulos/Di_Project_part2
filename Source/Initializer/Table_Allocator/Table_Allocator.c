@@ -131,14 +131,16 @@ void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
 
   //1.construct initFilePath
   const char *Init_File_Path = construct_Path(Table_Allocator->Init_Filename, Table_Allocator->Dir_Name);
+//  printf("file %s\n", Init_File_Path);
   //2.open init file
   Open_File_for_Read(&Init_File, Init_File_Path);
-  //3.read line by line
 
+  //3.read line by line
   for (int i = 0; i < Table->num_of_shells; i++) {
     int read = getline(&line_buffer, &line_buffer_size, Init_File);
     char* File_Name = Get_File_Name(line_buffer,read);
     const char *file_Path = construct_Path(File_Name, Table_Allocator->Dir_Name);
+//    printf("shell %s\n", file_Path);
     Fill_Shell(file_Path, &Table->Array[i]);
     free(file_Path);
     free(File_Name);
