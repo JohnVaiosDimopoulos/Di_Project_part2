@@ -1,6 +1,5 @@
 #include "./Initializer/Argument_Manager/Argument_Manager.h"
 #include "./Initializer/Table_Allocator/Table_Allocator.h"
-#include "./Initializer/Work_Reader/Work_Reader.h"
 #include "./Work_Executor/Work_Executor.h"
 //#include "./Query_Executor/Query_Executor.h"
 
