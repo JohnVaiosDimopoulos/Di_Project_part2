@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "../Util/Utilities.h"
 
 
 Batch_Ptr Read_next_Batch(FILE *fp) {
@@ -13,7 +12,11 @@ Batch_Ptr Read_next_Batch(FILE *fp) {
   //read batch line by line
   while(1) {
     int read = getline(&line_buffer, &line_buffer_size, fp);
-	if(read < 0) { printf("Reached EOF\n"); return NULL;}
+	if(read < 0) {
+	  printf("Reached EOF\n");
+	  free(line_buffer);
+	  return NULL;
+	}
     printf("%s\n", line_buffer);
 
     //if line was "F" batch is over

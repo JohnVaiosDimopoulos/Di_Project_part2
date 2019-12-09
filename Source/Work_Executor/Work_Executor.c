@@ -1,6 +1,5 @@
 #include "Work_Executor.h"
 #include "../Work_Reader/Work_Reader.h"
-#include "../Batch/Batch.h"
 #include "../Util/Utilities.h"
 #include "../Query_executor/Query_Executor.h"
 
@@ -18,9 +17,11 @@ void Start_Work(Table_Ptr Relations,Argument_Data_Ptr Arg_Data){
 	  Current_Query = Pop_Next_Query_from_Batch(Current_Batch);
       Execute_Query(Current_Query, Relations);
       Delete_Query(Current_Query);
+      free(Current_Query);
     }
     Delete_Batch(Current_Batch);
   }
+
   free(path);
   fclose(fp);
 
