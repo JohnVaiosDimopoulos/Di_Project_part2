@@ -26,6 +26,7 @@ Batch_Ptr Read_next_Batch(FILE *fp) {
   }
   free(line_buffer);
 
+
   Print_Batch(Batch);
   return Batch;
 }
