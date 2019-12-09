@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "../../Util/Utilities.h"
-#include "../../Query_Executor/Query_Executor.h"
 
 struct Query {
   char *Relation;
@@ -85,7 +84,7 @@ static void Print_Batch(Batch_Ptr Batch) {
   printf("\n");
 }
 
-static void Delete_Query(Query_Ptr Query) {
+void Delete_Query(Query_Ptr Query) {
   free(Query->Relation);
   free(Query->Predicates);
   free(Query->Projection);
@@ -104,7 +103,7 @@ void Delete_Batch(Batch_Ptr Batch) {
   free(Batch);
 }
 
-Query_Ptr Remove_Query(Batch_Ptr Batch) {
+Query_Ptr Pop_Next_Query_from_Batch(Batch_Ptr Batch) {
   if(Batch->counter == 0) {
 	  printf("LIST IS EMPTY, NO QUERY TO REMOVE\n");
 	  return NULL;
@@ -163,22 +162,8 @@ int Count_Batches(FILE *FilePtr) {
 
 void Read_Work_File(Argument_Data_Ptr Arg_Data, Table_Ptr Relations) {
 
-  const char *path = construct_Path(Get_Work_FileName(Arg_Data), Get_Dir_Name(Arg_Data));
 
-  FILE *fp;
-  Open_File_for_Read(&fp, path);
 
-  int num_of_batches = Count_Batches(fp);
-  printf("Batches are %d\n\n", num_of_batches);
-  for(int i = 0; i < num_of_batches; i++) {
-    Batch_Ptr Batch = Read_next_Batch(fp);
-	//execute queries...
-    while(Batch->Queries)
-      Execute_Query(Remove_Query(Batch), Relations);
-
-//	  printf("\n\n\nRemoved: %s\n", Remove_Query(Batch)->Relation);
-//    printf("\n\AFTER\n\n");
-//	  Print_Batch(Batch);
 
     Delete_Batch(Batch);
   }
