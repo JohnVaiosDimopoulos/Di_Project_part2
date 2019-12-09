@@ -16,9 +16,9 @@ int main(int argc, char** argv){
   Fill_Table(Table, Table_Allocator);
   Print_Table(Table);
 
-  Read_Work_File(Arg_Data, Table);
+//  Read_Work_File(Arg_Data, Table);
 
-//  Start_Work(Table, Arg_Data);
+  Start_Work(Table, Arg_Data);
 
   Delete_ArgManager(Manager);
   Delete_Argument_Data(Arg_Data);

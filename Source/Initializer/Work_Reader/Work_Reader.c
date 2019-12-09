@@ -132,9 +132,11 @@ Batch_Ptr Read_next_Batch(FILE *fp) {
   //read batch line by line
   while(1) {
     int read = getline(&line_buffer, &line_buffer_size, fp);
+	if(read < 0) { printf("Reached EOF\n"); return NULL;}
     printf("%s\n", line_buffer);
 
-	if(!strcmp(line_buffer, "F\n")) {/*printf("F found\n");*/ break;}
+    //if line was "F" batch is over
+	if(!strcmp(line_buffer, "F\n")) { printf("F found\n"); break;}
 
     char* command = malloc(sizeof(char) * line_buffer_size);
     sprintf(command, "%s", line_buffer);
@@ -161,15 +163,10 @@ int Count_Batches(FILE *FilePtr) {
 }
 
 void Read_Work_File(Argument_Data_Ptr Arg_Data, Table_Ptr Relations) {
-
-
-
-
-    Delete_Batch(Batch);
-  }
-  free(path);
-  fclose(fp);
 }
+//int Get_Queries(Batch_Ptr Batch) {
+//  return Batch->counter;
+//}
 
 int Get_num_of_Queries(Batch_Ptr Batch) {
   return Batch->counter;
