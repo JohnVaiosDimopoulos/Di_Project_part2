@@ -1,7 +1,10 @@
 #include "./Initializer/Argument_Manager/Argument_Manager.h"
 #include "./Initializer/Table_Allocator/Table_Allocator.h"
 #include "./Work_Executor/Work_Executor.h"
-//#include "./Query_Executor/Query_Executor.h"
+
+#include "Query_execution/Preparator/Preparator.h"
+#include "Query_execution/Query_executor/Query_Executor.h"
+#include "Query_execution/Query_parser/Query_parser.h"
 
 
 

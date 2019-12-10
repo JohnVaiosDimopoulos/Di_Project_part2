@@ -3,9 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-
-
 struct Parsed_Query{
 
 };
@@ -38,9 +35,29 @@ static int* Convert_Relations_to_Ints(Query_Ptr Query, int cnt) {
   return rel;
 }
 
+static int Count_Predicates(Query_Ptr Query) {
+  char* temp = Allocate_and_Copy_Str(Get_Query_Predicates(Query));
+  char* token = strtok(temp, "&");
+  int cnt = 0;
+
+  while(token != NULL ) {
+    cnt++;
+    token = strtok(NULL, "&");
+  }
+  free(temp);
+  return cnt;
+}
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
+  //relations
   int cnt = Count_Relations(Query);
+  printf("rel = %d\n", cnt);
   int* rel = Convert_Relations_to_Ints(Query,cnt);
+
+  //predicates
+  cnt = Count_Predicates(Query);
+  printf("pred = %d\n", cnt);
+  //projections
+
 }
 
