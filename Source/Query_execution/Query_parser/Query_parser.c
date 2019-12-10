@@ -32,7 +32,7 @@ struct Parsed_Query{
 
 
 static Parsed_Query_Ptr Allocate_Parsed_query(){
-  Parsed_Query_Ptr Parsed_Query = (Query_Ptr)malloc(sizeof(struct Parsed_Query));
+  Parsed_Query_Ptr Parsed_Query = (Parsed_Query_Ptr)malloc(sizeof(struct Parsed_Query));
   Parsed_Query->Filters=NULL;
   Parsed_Query->Joins=NULL;
   Parsed_Query->relations=NULL;
@@ -76,7 +76,7 @@ static void Setup_Projections(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
 static void Setup_Relation(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
   int cnt = Count_Relations(Query);
   int* rel = Convert_Relations_to_Ints(Query,cnt);
-  Parsed_Query->relations=rel;
+  Parsed_Query->relations = rel;
 }
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
