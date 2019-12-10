@@ -4,6 +4,7 @@
 #include "../Argument_Data/Arguments_Data.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 typedef struct Table_Allocator* Table_AllocatorPtr;
 typedef struct Table* Table_Ptr;
@@ -15,6 +16,7 @@ void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator);
 
 void Print_Table(Table_Ptr);
 Shell_Ptr Get_Table_Array(Table_Ptr);
+Shell_Ptr Get_Shell_by_index(Shell_Ptr,int);
 
 
 uint64_t Get_num_of_tuples(Shell_Ptr);

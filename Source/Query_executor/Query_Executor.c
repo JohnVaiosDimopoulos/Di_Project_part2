@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+
+
 static int Count_Relations(Query_Ptr Query) {
   char* temp = Allocate_and_Copy_Str(Get_Query_Relations(Query));
   char* token = strtok(temp, " ");
@@ -47,7 +49,7 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Relations){
   //fetch relations from table
   for(int i = 0; i < cnt; i++) {
     Shell_Ptr Shell = Get_Table_Array(Relations);
-    printf("%d: %llu %llu \n", i, Get_num_of_tuples(Shell), Get_num_of_columns(Shell));
+    printf("%d: %llu %llu \n", i, Get_num_of_tuples(Get_Shell_by_index(Shell,rel[i])), Get_num_of_columns(Get_Shell_by_index(Shell,rel[i])));
   }
 
   free(rel);

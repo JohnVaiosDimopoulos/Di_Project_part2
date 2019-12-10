@@ -1,7 +1,7 @@
 #include "Work_Executor.h"
 #include "../Work_Reader/Work_Reader.h"
 #include "../Util/Utilities.h"
-#include "../Query_Executor/Query_Executor.h"
+#include "../Query_executor/Query_Executor.h"
 
 void Start_Work(Table_Ptr Relations,Argument_Data_Ptr Arg_Data){
 

@@ -166,3 +166,7 @@ uint64_t Get_num_of_tuples(Shell_Ptr Shell) {
 uint64_t Get_num_of_columns(Shell_Ptr Shell) {
   return Shell->num_of_columns;
 }
+
+Shell_Ptr Get_Shell_by_index(Shell_Ptr Shell,int index){
+  return &Shell[index];
+}
