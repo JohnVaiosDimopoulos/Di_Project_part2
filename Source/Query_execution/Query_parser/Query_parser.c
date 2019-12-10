@@ -58,6 +58,13 @@ static int* Convert_Relations_to_Ints(Query_Ptr Query, int cnt) {
   return rel;
 }
 
+static void Setup_Relation(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
+  int cnt = Count_Relations(Query);
+  printf("rel = %d\n", cnt);
+  int* rel = Convert_Relations_to_Ints(Query,cnt);
+  Parsed_Query->relations = rel;
+}
+
 static int Count_Predicates(Query_Ptr Query) {
   char* temp = Allocate_and_Copy_Str(Get_Query_Predicates(Query));
   char* token = strtok(temp, "&");
@@ -71,21 +78,72 @@ static int Count_Predicates(Query_Ptr Query) {
   return cnt;
 }
 
-static void Setup_Relation(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
-  //relations
-  int cnt = Count_Relations(Query);
-  printf("rel = %d\n", cnt);
-  int* rel = Convert_Relations_to_Ints(Query,cnt);
+static void Setup_Joins(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
+}
 
-//  //predicates
-//  cnt = Count_Predicates(Query);
-//  printf("pred = %d\n", cnt);
-//  //projections
-  Parsed_Query->relations=rel;
+static void Setup_Filters(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
 }
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
   Parsed_Query_Ptr Parsed_Query = Allocate_Parsed_query();
+  //relations
   Setup_Relation(Parsed_Query,Query);
+
+  //predicates
+//  int cnt = Count_Predicates(Query);
+//  printf("pred = %d\n", cnt);
+
+  Setup_Joins(Parsed_Query,Query);
+  Setup_Filters(Parsed_Query,Query);
+
+  return Parsed_Query;
 }
 
+
+//Parsed Query Accessors//
+
+Join_Ptr Get_Joins(Parsed_Query_Ptr Parsed_Query){
+  return Parsed_Query->Joins;
+}
+
+Filter_Ptr Get_Filters(Parsed_Query_Ptr Parsed_Query){
+  return Parsed_Query->Filters;
+}
+
+
+//Filter Accessors//
+
+int Get_Relation(Filter_Ptr Filter){
+  return Filter->rel;
+}
+
+int Get_Column(Filter_Ptr Filter){
+  return  Filter->col;
+}
+
+int Get_Amount(Filter_Ptr Filter){
+  return Filter->amount;
+}
+
+char* Get_Type(Filter_Ptr Filter){
+  return Filter->type;
+}
+
+
+// Join Accessors
+
+int Get_Relation_1(Join_Ptr Join){
+  return Join->rel1;
+}
+
+int Get_Column_1(Join_Ptr Join){
+  return Join->col1;
+}
+
+int Get_Relation_2(Join_Ptr Join){
+  return Join->col2;
+}
+
+int Get_Column_2(Join_Ptr Join){
+  return Join->rel2;
+}
