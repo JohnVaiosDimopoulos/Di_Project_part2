@@ -15,6 +15,7 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Relations){
 
   //1.Parse the query
   Parsed_Query_Ptr Parsed_Query = Parse_Query(Query);
+  Delete_Parsed_Query(Parsed_Query);
 
   //2.do the preparations
     //1.give row ids
