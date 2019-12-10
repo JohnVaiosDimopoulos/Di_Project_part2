@@ -3,10 +3,33 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct Parsed_Query{
-
+struct Join{
+  int rel1;
+  int col1;
+  int rel2;
+  int col2;
 };
 
+struct Filter{
+  int rel;
+  int col;
+  char* type;
+  int amount;
+};
+
+struct Parsed_Query{
+  int* relations;
+  Join_Ptr Joins;
+  Filter_Ptr Filters;
+};
+
+
+static Parsed_Query_Ptr Allocate_Parsed_query(){
+  Parsed_Query_Ptr Parsed_Query = (Parsed_Query_Ptr)malloc(sizeof(struct Parsed_Query));
+  Parsed_Query->Filters=NULL;
+  Parsed_Query->Joins=NULL;
+  Parsed_Query->relations=NULL;
+}
 
 static int Count_Relations(Query_Ptr Query) {
   char* temp = Allocate_and_Copy_Str(Get_Query_Relations(Query));
@@ -48,16 +71,21 @@ static int Count_Predicates(Query_Ptr Query) {
   return cnt;
 }
 
-Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
+static void Setup_Relation(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
   //relations
   int cnt = Count_Relations(Query);
   printf("rel = %d\n", cnt);
   int* rel = Convert_Relations_to_Ints(Query,cnt);
 
-  //predicates
-  cnt = Count_Predicates(Query);
-  printf("pred = %d\n", cnt);
-  //projections
+//  //predicates
+//  cnt = Count_Predicates(Query);
+//  printf("pred = %d\n", cnt);
+//  //projections
+  Parsed_Query->relations=rel;
+}
 
+Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
+  Parsed_Query_Ptr Parsed_Query = Allocate_Parsed_query();
+  Setup_Relation(Parsed_Query,Query);
 }
 
