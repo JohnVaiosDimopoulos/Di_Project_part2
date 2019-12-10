@@ -7,6 +7,7 @@ static int Count_Relations(Query_Ptr Query, char **rel) {
   char* temp = Allocate_and_Copy_Str(Get_Query_Relations(Query));
   char* token = strtok(temp, " ");
   int cnt = 0;
+
   while(token != NULL ) {
 //    printf( "%s\n", token );
 	cnt++;
