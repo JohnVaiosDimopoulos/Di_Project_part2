@@ -25,17 +25,29 @@ struct Projection{
 
 struct Parsed_Query{
   int* relations;
+  int num_of_relations;
+
   Join_Ptr Joins;
+  int num_of_joins;
+
   Filter_Ptr Filters;
+  int num_of_filters;
+
   Projection_Ptr Projection;
+  int num_of_projections;
 };
 
 
 static Parsed_Query_Ptr Allocate_Parsed_query(){
-  Parsed_Query_Ptr Parsed_Query = (Query_Ptr)malloc(sizeof(struct Parsed_Query));
+  Parsed_Query_Ptr Parsed_Query = (Parsed_Query_Ptr)malloc(sizeof(struct Parsed_Query));
   Parsed_Query->Filters=NULL;
   Parsed_Query->Joins=NULL;
   Parsed_Query->relations=NULL;
+}
+
+void Delete_Parsed_Query(){
+
+
 }
 
 static int Count_Relations(Query_Ptr Query) {
@@ -77,6 +89,7 @@ static void Setup_Relation(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
   int cnt = Count_Relations(Query);
   int* rel = Convert_Relations_to_Ints(Query,cnt);
   Parsed_Query->relations=rel;
+  Parsed_Query->num_of_relations=cnt;
 }
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
@@ -94,9 +107,26 @@ Join_Ptr Get_Joins(Parsed_Query_Ptr Parsed_Query){
   return Parsed_Query->Joins;
 }
 
+int Get_Num_of_Joins(Parsed_Query_Ptr Parsed_Query){
+  return Parsed_Query->num_of_joins;
+}
+
 Filter_Ptr Get_Filters(Parsed_Query_Ptr Parsed_Query){
   return Parsed_Query->Filters;
 }
+
+int Get_Num_of_Filters(Parsed_Query_Ptr Parsed_Query){
+  return Parsed_Query->num_of_filters;
+}
+
+int* Get_Relations(Parsed_Query_Ptr Parsed_Query){
+  return Parsed_Query->relations;
+}
+
+int Get_Num_of_Relations(Parsed_Query_Ptr Parsed_Query){
+  return Parsed_Query->num_of_relations;
+}
+
 
 
 //Filter Accessors//

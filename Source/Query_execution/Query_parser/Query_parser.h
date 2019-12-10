@@ -13,6 +13,10 @@ Parsed_Query_Ptr Parse_Query(Query_Ptr);
 //Parsed_Query Accessors//
 Join_Ptr Get_Joins(Parsed_Query_Ptr Parsed_Query);
 Filter_Ptr Get_Filters(Parsed_Query_Ptr Parsed_Query);
+int Get_Num_of_Relations(Parsed_Query_Ptr);
+int* Get_Relations(Parsed_Query_Ptr);
+int Get_Num_of_Filters(Parsed_Query_Ptr);
+int Get_Num_of_Joins(Parsed_Query_Ptr);
 
 //Filter Accessors//
 int Get_Filter_Relation(Filter_Ptr Filter);
