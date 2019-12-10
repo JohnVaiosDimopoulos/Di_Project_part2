@@ -9,6 +9,7 @@ typedef struct Filter* Filter_Ptr;
 typedef struct Projection* Projection_Ptr;
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr);
+void Delete_Parsed_Query(Parsed_Query_Ptr Parsed_Query);
 
 //Parsed_Query Accessors//
 Join_Ptr Get_Joins(Parsed_Query_Ptr Parsed_Query);

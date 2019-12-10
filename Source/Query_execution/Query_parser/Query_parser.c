@@ -43,13 +43,21 @@ static Parsed_Query_Ptr Allocate_Parsed_query(){
   Parsed_Query->Filters=NULL;
   Parsed_Query->Joins=NULL;
   Parsed_Query->relations=NULL;
+  Parsed_Query->Projection=NULL;
 
   return Parsed_Query;
 }
 
-void Delete_Parsed_Query(){
 
 
+
+
+void Delete_Parsed_Query(Parsed_Query_Ptr Parsed_Query){
+  free(Parsed_Query->relations);
+  free(Parsed_Query->Joins);
+  free(Parsed_Query->Filters);
+  free(Parsed_Query->Projection);
+  free(Parsed_Query);
 }
 
 static int Count_Relations(Query_Ptr Query) {
