@@ -13,8 +13,9 @@ void Start_Work(Table_Ptr Relations,Argument_Data_Ptr Arg_Data){
   Query_Ptr Current_Query;
 
   while((Current_Batch = Read_next_Batch(fp)) != NULL) {
-	while(Get_num_of_Queries(Current_Batch))
+	while(Get_num_of_Queries(Current_Batch)) {
       Execute_Query(Pop_Next_Query_from_Batch(Current_Batch), Relations);
+	}
     Delete_Batch(Current_Batch);
   }
   free(path);
