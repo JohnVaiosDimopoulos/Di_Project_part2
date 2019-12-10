@@ -18,10 +18,16 @@ struct Filter{
   int amount;
 };
 
+struct Projection{
+  int rel;
+  int col;
+};
+
 struct Parsed_Query{
   int* relations;
   Join_Ptr Joins;
   Filter_Ptr Filters;
+  Projection_Ptr Projection;
 };
 
 
@@ -59,11 +65,11 @@ static int* Convert_Relations_to_Ints(Query_Ptr Query, int cnt) {
   return rel;
 }
 
-static void Setup_Joins(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
+static void Setup_Joins_And_Filters(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
 
 }
 
-static void Setup_Filters(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
+static void Setup_Projections(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
 
 }
 
@@ -76,8 +82,8 @@ static void Setup_Relation(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
 Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
   Parsed_Query_Ptr Parsed_Query = Allocate_Parsed_query();
   Setup_Relation(Parsed_Query,Query);
-  Setup_Joins(Parsed_Query,Query);
-  Setup_Filters(Parsed_Query,Query);
+  Setup_Joins_And_Filters(Parsed_Query,Query);
+  Setup_Projections(Parsed_Query,Query);
   return Parsed_Query;
 }
 
@@ -95,11 +101,11 @@ Filter_Ptr Get_Filters(Parsed_Query_Ptr Parsed_Query){
 
 //Filter Accessors//
 
-int Get_Relation(Filter_Ptr Filter){
+int Get_Filter_Relation(Filter_Ptr Filter){
   return Filter->rel;
 }
 
-int Get_Column(Filter_Ptr Filter){
+int Get_Filter_Column(Filter_Ptr Filter){
   return  Filter->col;
 }
 
@@ -112,7 +118,7 @@ char* Get_Type(Filter_Ptr Filter){
 }
 
 
-// Join Accessors
+// Join Accessors//
 
 int Get_Relation_1(Join_Ptr Join){
   return Join->rel1;
@@ -128,4 +134,14 @@ int Get_Relation_2(Join_Ptr Join){
 
 int Get_Column_2(Join_Ptr Join){
   return Join->rel2;
+}
+
+//Projection Accessors//
+
+int Get_Projection_Relation(Projection_Ptr Projection){
+  return Projection->rel;
+}
+
+int Get_Projection_Column(Projection_Ptr Projection){
+  return Projection->col;
 }
