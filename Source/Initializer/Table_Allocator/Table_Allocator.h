@@ -17,6 +17,8 @@ void Print_Table(Table_Ptr);
 Shell_Ptr Get_Table_Array(Table_Ptr);
 
 
+uint64_t Get_num_of_tuples(Shell_Ptr);
+uint64_t Get_num_of_columns(Shell_Ptr);
 
 void Delete_Table_Allocator(Table_AllocatorPtr);
 void Delete_Table(Table_Ptr);

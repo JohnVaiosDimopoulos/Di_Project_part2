@@ -33,14 +33,22 @@ static int* Convert_Relations_to_Ints(Query_Ptr Query, int cnt) {
 // we dont know how this will be done
 void Execute_Query(Query_Ptr Query, Table_Ptr Relations){
   printf("Execute Query %s\n", Get_Query_Relations(Query));
+
   int cnt = Count_Relations(Query);
   printf("cnt = %d\n", cnt);
+
   int* rel = Convert_Relations_to_Ints(Query, cnt);
   printf("rels: ");
   for(int i = 0; i < cnt; i++)
     printf("%d ", rel[i]);
-
   printf("\n");
+
+  //fetch relations from table
+  for(int i = 0; i < cnt; i++) {
+    Shell_Ptr Shell = Get_Table_Array(Relations);
+    printf("%d: %llu %llu \n", i, Get_num_of_tuples(Shell), Get_num_of_columns(Shell));
+  }
+
   free(rel);
 }
 
