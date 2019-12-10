@@ -28,6 +28,9 @@ static int Count_Relations(Query_Ptr Query, char **rel) {
     token = strtok(NULL, " ");
   }
   free(temp);
+  for(int i =0;i<cnt;i++)
+    free(rel[i]);
+  free(rel);
   return cnt;
 }
 
