@@ -4,10 +4,25 @@
 #include <string.h>
 
 
+struct Join{
+  int rel1;
+  int col1;
+  int rel2;
+  int col2;
+};
 
+
+struct Filter{
+  int rel;
+  int col;
+  char* type;
+  int amount;
+};
 
 struct Parsed_Query{
-
+  int* relations;
+  Join_Ptr Joins;
+  Filter_Ptr Filters;
 };
 
 
