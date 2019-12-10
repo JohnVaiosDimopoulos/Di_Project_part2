@@ -4,8 +4,8 @@
 #include "../../Query/Query.h"
 
 typedef struct Parsed_Query* Parsed_Query_Ptr;
-typedef struct Join Join_Ptr;
-typedef struct Filter Filter_Ptr;
+typedef struct Join* Join_Ptr;
+typedef struct Filter* Filter_Ptr;
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr);
 
