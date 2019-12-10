@@ -7,12 +7,11 @@ struct Table_Allocator{
   char* Dir_Name;
 };
 
+
 struct Table {
   Shell_Ptr Array;
   int num_of_shells;
 };
-
-
 
 struct Shell {
   uint64_t num_of_tuples;
@@ -33,7 +32,7 @@ void Delete_Table_Allocator(Table_AllocatorPtr Table_Allocator){
   free(Table_Allocator);
 }
 
-static int Get_num_of_Tables(Table_AllocatorPtr Table_Allocator){
+static int Count_Shells(Table_AllocatorPtr Table_Allocator){
   const char* Init_File = construct_Path(Table_Allocator->Init_Filename,Table_Allocator->Dir_Name);
   FILE* FilePtr;
   Open_File_for_Read(&FilePtr,Init_File);
@@ -43,7 +42,7 @@ static int Get_num_of_Tables(Table_AllocatorPtr Table_Allocator){
 }
 
 Table_Ptr Allocate_Table(Table_AllocatorPtr Table_Allocator){
-  int num_of_tables = Get_num_of_Tables(Table_Allocator);
+  int num_of_tables = Count_Shells(Table_Allocator);
   Table_Ptr Table = (Table_Ptr)malloc(sizeof(Table));
   Table->Array = malloc(num_of_tables * sizeof(struct Shell));
   Table->num_of_shells = num_of_tables;
@@ -161,3 +160,9 @@ void Delete_Table(Table_Ptr Table) {
   free(Table);
 }
 
+uint64_t Get_num_of_tuples(Shell_Ptr Shell) {
+  return Shell->num_of_tuples;
+}
+uint64_t Get_num_of_columns(Shell_Ptr Shell) {
+  return Shell->num_of_columns;
+}

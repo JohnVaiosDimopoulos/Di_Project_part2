@@ -4,6 +4,7 @@
 #include "../Initializer/Argument_Data/Arguments_Data.h"
 #include "../Initializer/Table_Allocator/Table_Allocator.h"
 #include "../Batch/Batch.h"
+#include "../Query/Query.h"
 #include <stdlib.h>
 #include <stdio.h>
 

@@ -3,63 +3,53 @@
 #include <stdio.h>
 #include <string.h>
 
-static int Count_Relations(Query_Ptr Query, char **rel) {
+static int Count_Relations(Query_Ptr Query) {
   char* temp = Allocate_and_Copy_Str(Get_Query_Relations(Query));
   char* token = strtok(temp, " ");
   int cnt = 0;
 
   while(token != NULL ) {
-//    printf( "%s\n", token );
 	cnt++;
     token = strtok(NULL, " ");
   }
   free(temp);
+  return cnt;
+}
 
+static int* Convert_Relations_to_Ints(Query_Ptr Query, int cnt) {
   //tokenize
-  rel = (char**)malloc(cnt * sizeof(char*));
-  for(int i = 0; i < cnt; i++)
-	  rel[i] = (char*)malloc(3 * sizeof(char));
+  int *rel = (int*)malloc(cnt * sizeof(int));
 
-  temp = Allocate_and_Copy_Str(Get_Query_Relations(Query));
-  token = strtok(temp, " ");
+  char *temp = Allocate_and_Copy_Str(Get_Query_Relations(Query));
+  char *token = strtok(temp, " ");
   for(int i = 0; i < cnt; i++) {
-//    printf("%s\n", token);
-	strcpy(rel[i], token);
-//    printf("%s\n", rel[i]);
+    rel[i] = atoi(token);
     token = strtok(NULL, " ");
   }
   free(temp);
-  for(int i =0;i<cnt;i++)
-    free(rel[i]);
-  free(rel);
-  return cnt;
+  return rel;
 }
 
 
 // we dont know how this will be done
 void Execute_Query(Query_Ptr Query, Table_Ptr Relations){
   printf("Execute Query %s\n", Get_Query_Relations(Query));
-  char** rel;
-  int cnt = Count_Relations(Query, rel);
+
+  int cnt = Count_Relations(Query);
   printf("cnt = %d\n", cnt);
-//  for(int i = 0; i < cnt; i++)
-//    printf("rel = %s\n", rel[i]);
 
-//  for(int i = 0; i < cnt; i++)
-//    free(rel[i]);
-//  free(rel);
+  int* rel = Convert_Relations_to_Ints(Query, cnt);
+  printf("rels: ");
+  for(int i = 0; i < cnt; i++)
+    printf("%d ", rel[i]);
+  printf("\n");
 
-//  char rel[3];
-//  for(int i = 0; i < cnt; i++) {
-//    sscanf(Get_Query_Relations(Query), "%s", rel);
-//	printf("rel: %s\n", rel);
-//  }
+  //fetch relations from table
+  for(int i = 0; i < cnt; i++) {
+    Shell_Ptr Shell = Get_Table_Array(Relations);
+    printf("%d: %llu %llu \n", i, Get_num_of_tuples(Shell), Get_num_of_columns(Shell));
+  }
 
-//  char *rel = Tokenize_Relations(Query);
-  //while(rel != NULL) {
-//  for(int i = 0; i < 2; i++) {
-//    rel = Tokenize_Relations(Query);
-//    printf("%s\n", rel);
-//  }
+  free(rel);
 }
 
