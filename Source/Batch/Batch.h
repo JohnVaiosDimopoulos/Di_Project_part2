@@ -2,6 +2,7 @@
 #define MULTI_JOIN_BATCH_H
 
 #include "../Query/Query.h"
+
 typedef struct Batch* Batch_Ptr;
 void Delete_Batch(Batch_Ptr);
 Batch_Ptr Create_Batch();
