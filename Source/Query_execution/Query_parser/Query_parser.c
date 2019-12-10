@@ -81,6 +81,7 @@ Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
   return Parsed_Query;
 }
 
+
 //Parsed Query Accessors//
 
 Join_Ptr Get_Joins(Parsed_Query_Ptr Parsed_Query){
@@ -90,6 +91,7 @@ Join_Ptr Get_Joins(Parsed_Query_Ptr Parsed_Query){
 Filter_Ptr Get_Filters(Parsed_Query_Ptr Parsed_Query){
   return Parsed_Query->Filters;
 }
+
 
 //Filter Accessors//
 
@@ -105,7 +107,7 @@ int Get_Amount(Filter_Ptr Filter){
   return Filter->amount;
 }
 
-char* Get_Tyoe(Filter_Ptr Filter){
+char* Get_Type(Filter_Ptr Filter){
   return Filter->type;
 }
 
