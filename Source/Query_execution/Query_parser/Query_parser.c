@@ -107,20 +107,37 @@ static int Count_Projections(Query_Ptr Query) {
   return cnt;
 }
 
-//not ready yet
-//need to distinct rel from col
+static void Tokenize_rel_col(int *rel, int *col, char *str) {
+	//separate relation from column
+	char *temp = (char*)malloc(strlen(str) * sizeof(char));
+	strcpy(temp, str);
+	char *tok = strtok(temp, ".");
+    *rel = atoi(tok);
+    tok = strtok(NULL, ".");
+    *col = atoi(tok);
+
+    free(temp);
+}
+
 static Projection_Ptr Fill_Projection_Array(Query_Ptr Query, int cnt) {
   //tokenize
   Projection_Ptr proj = (Projection_Ptr)malloc(cnt * sizeof(struct Projection));
+  char *temp_proj[cnt];
 
-  char *temp = Allocate_and_Copy_Str(Get_Query_Projections(Query));
-  char *token = strtok(temp, " ");
+  char *temp_query = Allocate_and_Copy_Str(Get_Query_Projections(Query));
+  char *token = strtok(temp_query, " ");
   for(int i = 0; i < cnt; i++) {
-    printf("tok: %s\n", token);
-    proj->rel = atoi(token);
+	temp_proj[i] = (char*)malloc(strlen(token) * sizeof(char));
+	strcpy(temp_proj[i], token);
     token = strtok(NULL, " ");
   }
-  free(temp);
+  free(temp_query);
+
+  for(int i = 0; i < cnt; i++) {
+    Tokenize_rel_col(&(proj[i].rel), &(proj[i].col), temp_proj[i]);
+    free(temp_proj[i]);
+  }
+
   return proj;
 }
 
@@ -129,6 +146,9 @@ static void Setup_Projections(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
   Parsed_Query->num_of_projections = cnt;
 
   Parsed_Query->Projections = Fill_Projection_Array(Query, cnt);
+  for(int i = 0; i < cnt; i++) {
+    printf("#%d rel: %d, col: %d\n", i, Parsed_Query->Projections[i].rel, Parsed_Query->Projections[i].col);
+  }
 }
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
