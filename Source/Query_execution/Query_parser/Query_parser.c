@@ -48,10 +48,6 @@ static Parsed_Query_Ptr Allocate_Parsed_query(){
   return Parsed_Query;
 }
 
-
-
-
-
 void Delete_Parsed_Query(Parsed_Query_Ptr Parsed_Query){
   free(Parsed_Query->relations);
   free(Parsed_Query->Joins);
@@ -87,29 +83,64 @@ static int* Convert_Relations_to_Ints(Query_Ptr Query, int cnt) {
   return rel;
 }
 
-static void Setup_Joins_And_Filters(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
-
-}
-
-static void Setup_Projections(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
-
-}
-
-static void Setup_Relation(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
+static void Setup_Relations(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
   int cnt = Count_Relations(Query);
-  int* rel = Convert_Relations_to_Ints(Query,cnt);
+  int* rel = Convert_Relations_to_Ints(Query, cnt);
   Parsed_Query->relations = rel;
   Parsed_Query->num_of_relations = cnt;
 }
 
+static void Setup_Joins_And_Filters(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
+
+}
+
+static int Count_Projections(Query_Ptr Query) {
+  char* temp = Allocate_and_Copy_Str(Get_Query_Projections(Query));
+  char* token = strtok(temp, " ");
+  int cnt = 0;
+
+  while(token != NULL ) {
+    cnt++;
+    token = strtok(NULL, " ");
+  }
+  free(temp);
+  return cnt;
+}
+
+//not ready yet
+static int* Convert_Projections_to_Ints(Query_Ptr Query, int cnt) {
+  //tokenize
+  int *proj = (int*)malloc(cnt * sizeof(int));
+
+  char *temp = Allocate_and_Copy_Str(Get_Query_Projections(Query));
+  char *token = strtok(temp, " ");
+  for(int i = 0; i < cnt; i++) {
+    proj[i] = atoi(token);
+    token = strtok(NULL, " ");
+  }
+  free(temp);
+  return proj;
+}
+
+static void Setup_Projections(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
+  int cnt = Count_Projections(Query);
+
+  Parsed_Query->num_of_projections = cnt;
+}
+
 Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
   Parsed_Query_Ptr Parsed_Query = Allocate_Parsed_query();
-  Setup_Relation(Parsed_Query,Query);
+  //relations
+  Setup_Relations(Parsed_Query,Query);
+
   Setup_Joins_And_Filters(Parsed_Query,Query);
   Setup_Projections(Parsed_Query,Query);
   return Parsed_Query;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Parsed Query Accessors//
 
