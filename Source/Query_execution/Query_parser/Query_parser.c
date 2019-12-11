@@ -56,6 +56,7 @@ void Delete_Parsed_Query(Parsed_Query_Ptr Parsed_Query){
   free(Parsed_Query);
 }
 
+//RELATIONS 
 static int Count_Relations(Query_Ptr Query) {
   char* temp = Allocate_and_Copy_Str(Get_Query_Relations(Query));
   char* token = strtok(temp, " ");
@@ -83,17 +84,68 @@ static int* Convert_Relations_to_Ints(Query_Ptr Query, int cnt) {
   return rel;
 }
 
-static void Setup_Relations(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
+static void Setup_Relations(Parsed_Query_Ptr Parsed_Query, Query_Ptr Query){
   int cnt = Count_Relations(Query);
   int* rel = Convert_Relations_to_Ints(Query, cnt);
   Parsed_Query->relations = rel;
   Parsed_Query->num_of_relations = cnt;
 }
 
-static void Setup_Joins_And_Filters(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
+//JOINS AND FILTERS
+static int Count_Predicates(Query_Ptr Query) {
+  char* temp = Allocate_and_Copy_Str(Get_Query_Predicates(Query));
+  char* token = strtok(temp, "&");
+  int cnt = 0;
 
+  while(token != NULL ) {
+    cnt++;
+    token = strtok(NULL, "&");
+  }
+  free(temp);
+  return cnt;
 }
 
+static Join_Ptr Fill_Joins(Query_Ptr Query, int cnt) {
+  //tokenize
+  Join_Ptr join = (Join_Ptr)malloc(cnt * sizeof(struct Join));
+  char *temp_join[cnt];
+
+  char *temp_query = Allocate_and_Copy_Str(Get_Query_Predicates(Query));
+  char *token = strtok(temp_query, "&");
+  for(int i = 0; i < cnt; i++) {
+	temp_join[i] = (char*)malloc(strlen(token) * sizeof(char));
+	strcpy(temp_join[i], token);
+    token = strtok(NULL, "&");
+  }
+  free(temp_query);
+
+  for(int i = 0; i < cnt; i++) {
+    printf("preds: %s\n", temp_join[i]);
+	if(strstr(temp_join[i], "<") || strstr(temp_join[i], ">"))
+      printf("\tfilter\n");
+	else
+      printf("\tjoin\n");
+//	  if(strstr(temp_join[i], "."))
+//    Tokenize_rel_col(&(proj[i].rel), &(proj[i].col), temp_proj[i]);
+    free(temp_join[i]);
+  }
+
+  return join;
+}
+
+static void Setup_Joins_And_Filters(Parsed_Query_Ptr Parsed_Query, Query_Ptr Query){
+  int cnt = Count_Predicates(Query);
+  printf("\npredicates = %d\n", cnt);
+
+  Parsed_Query->Joins = Fill_Joins(Query, cnt);
+  //just for checking
+//  for(int i = 0; i < cnt; i++) {
+//    printf("#%d rel: %d, col: %d\n", i, Parsed_Query->Projections[i].rel, Parsed_Query->Projections[i].col);
+//  }
+}
+
+
+//PROJECTIONS
 static int Count_Projections(Query_Ptr Query) {
   char* temp = Allocate_and_Copy_Str(Get_Query_Projections(Query));
   char* token = strtok(temp, " ");
@@ -141,14 +193,15 @@ static Projection_Ptr Fill_Projection_Array(Query_Ptr Query, int cnt) {
   return proj;
 }
 
-static void Setup_Projections(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
+static void Setup_Projections(Parsed_Query_Ptr Parsed_Query, Query_Ptr Query){
   int cnt = Count_Projections(Query);
   Parsed_Query->num_of_projections = cnt;
 
   Parsed_Query->Projections = Fill_Projection_Array(Query, cnt);
-  for(int i = 0; i < cnt; i++) {
-    printf("#%d rel: %d, col: %d\n", i, Parsed_Query->Projections[i].rel, Parsed_Query->Projections[i].col);
-  }
+  //just for checking
+//  for(int i = 0; i < cnt; i++) {
+//    printf("#%d rel: %d, col: %d\n", i, Parsed_Query->Projections[i].rel, Parsed_Query->Projections[i].col);
+//  }
 }
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
