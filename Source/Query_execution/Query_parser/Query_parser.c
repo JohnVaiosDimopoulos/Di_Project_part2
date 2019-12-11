@@ -33,7 +33,7 @@ struct Parsed_Query{
   Filter_Ptr Filters;
   int num_of_filters;
 
-  Projection_Ptr Projection;
+  Projection_Ptr Projections;
   int num_of_projections;
 };
 
@@ -43,7 +43,7 @@ static Parsed_Query_Ptr Allocate_Parsed_query(){
   Parsed_Query->Filters=NULL;
   Parsed_Query->Joins=NULL;
   Parsed_Query->relations=NULL;
-  Parsed_Query->Projection=NULL;
+  Parsed_Query->Projections=NULL;
 
   return Parsed_Query;
 }
@@ -52,7 +52,7 @@ void Delete_Parsed_Query(Parsed_Query_Ptr Parsed_Query){
   free(Parsed_Query->relations);
   free(Parsed_Query->Joins);
   free(Parsed_Query->Filters);
-  free(Parsed_Query->Projection);
+  free(Parsed_Query->Projections);
   free(Parsed_Query);
 }
 
@@ -108,14 +108,16 @@ static int Count_Projections(Query_Ptr Query) {
 }
 
 //not ready yet
-static int* Convert_Projections_to_Ints(Query_Ptr Query, int cnt) {
+//need to distinct rel from col
+static Projection_Ptr Fill_Projection_Array(Query_Ptr Query, int cnt) {
   //tokenize
-  int *proj = (int*)malloc(cnt * sizeof(int));
+  Projection_Ptr proj = (Projection_Ptr)malloc(cnt * sizeof(struct Projection));
 
   char *temp = Allocate_and_Copy_Str(Get_Query_Projections(Query));
   char *token = strtok(temp, " ");
   for(int i = 0; i < cnt; i++) {
-    proj[i] = atoi(token);
+    printf("tok: %s\n", token);
+    proj->rel = atoi(token);
     token = strtok(NULL, " ");
   }
   free(temp);
@@ -124,14 +126,15 @@ static int* Convert_Projections_to_Ints(Query_Ptr Query, int cnt) {
 
 static void Setup_Projections(Parsed_Query_Ptr Parsed_Query,Query_Ptr Query){
   int cnt = Count_Projections(Query);
-
   Parsed_Query->num_of_projections = cnt;
+
+  Parsed_Query->Projections = Fill_Projection_Array(Query, cnt);
 }
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
   Parsed_Query_Ptr Parsed_Query = Allocate_Parsed_query();
   //relations
-  Setup_Relations(Parsed_Query,Query);
+  Setup_Relations(Parsed_Query, Query);
 
   Setup_Joins_And_Filters(Parsed_Query,Query);
   Setup_Projections(Parsed_Query,Query);
