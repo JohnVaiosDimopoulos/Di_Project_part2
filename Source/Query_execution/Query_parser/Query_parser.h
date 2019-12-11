@@ -22,7 +22,7 @@ int Get_Num_of_Joins(Parsed_Query_Ptr);
 //Filter Accessors//
 int Get_Filter_Relation(Filter_Ptr Filter);
 int Get_Filter_Column(Filter_Ptr Filter);
-int Get_Amount(Filter_Ptr Filter);
+int Get_Constant(Filter_Ptr Filter);
 char* Get_Type(Filter_Ptr Filter);
 
 //Join Accessors//

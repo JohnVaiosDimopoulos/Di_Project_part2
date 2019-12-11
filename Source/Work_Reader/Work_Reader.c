@@ -7,16 +7,17 @@
 Batch_Ptr Read_next_Batch(FILE *fp) {
   char *line_buffer = NULL;
   size_t line_buffer_size = 0;
+
+  int read = getline(&line_buffer, &line_buffer_size, fp);
+  if(read < 0) {
+    printf("Reached EOF\n");
+    free(line_buffer);
+    return NULL;
+  }
   Batch_Ptr Batch = Create_Batch();
 
   //read batch line by line
   while(1) {
-    int read = getline(&line_buffer, &line_buffer_size, fp);
-	if(read < 0) {
-	  printf("Reached EOF\n");
-	  free(line_buffer);
-	  return NULL;
-	}
     printf("%s\n", line_buffer);
 
     //if line was "F" batch is over
@@ -26,6 +27,8 @@ Batch_Ptr Read_next_Batch(FILE *fp) {
     sprintf(command, "%s", line_buffer);
     Insert_Query(command, Batch);
     free(command);
+    
+	read = getline(&line_buffer, &line_buffer_size, fp);
   }
   free(line_buffer);
 

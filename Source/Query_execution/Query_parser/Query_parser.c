@@ -15,7 +15,7 @@ struct Filter{
   int rel;
   int col;
   char* type;
-  int amount;
+  int constant;
 };
 
 struct Projection{
@@ -105,42 +105,104 @@ static int Count_Predicates(Query_Ptr Query) {
   return cnt;
 }
 
-static Join_Ptr Fill_Joins(Query_Ptr Query, int cnt) {
-  //tokenize
-  Join_Ptr join = (Join_Ptr)malloc(cnt * sizeof(struct Join));
-  char *temp_join[cnt];
+static void Tokenize_to_rel_and_col(int *rel, int *col, char *str) {
+	//separate relation from column
+	char *temp = (char*)malloc(strlen(str) * sizeof(char));
+	strcpy(temp, str);
+	char *tok = strtok(temp, ".");
+    *rel = atoi(tok);
+    tok = strtok(NULL, ".");
+    *col = atoi(tok);
 
+    free(temp);
+}
+
+static int it_is_Join(int *second_col, int *constant, char *predicates) {
+  char *token;
+  if(strstr(predicates, "<")) {
+    token = strtok(predicates, "<");
+    token = strtok(NULL, "<");
+	*constant = atoi(token);
+	return 0;
+  } else if(strstr(predicates, ">")) {
+    token = strtok(predicates, ">");
+    token = strtok(NULL, ">");
+	*constant = atoi(token);
+	return 0;
+  } else {
+    token = strtok(predicates, "=");
+    token = strtok(NULL, "=");
+    if(strstr(token, ".")) {
+      Tokenize_to_rel_and_col(&second_col[0], &second_col[1], token);
+	  return 1;
+    } else {
+	  *constant = atoi(token);
+	  return 0;
+    }
+  }
+}
+
+static void Fill_Predicates(Query_Ptr Query, int cnt, Join_Ptr Join, Filter_Ptr Filter) {
+  //tokenize
   char *temp_query = Allocate_and_Copy_Str(Get_Query_Predicates(Query));
   char *token = strtok(temp_query, "&");
+
+  char *temp_pred[cnt];
   for(int i = 0; i < cnt; i++) {
-	temp_join[i] = (char*)malloc(strlen(token) * sizeof(char));
-	strcpy(temp_join[i], token);
+	temp_pred[i] = (char*)malloc(strlen(token) * sizeof(char));
+	strcpy(temp_pred[i], token);
     token = strtok(NULL, "&");
   }
   free(temp_query);
 
+  int join_first_col[cnt][2];
+  int filter_first_col[cnt][2];
+  int second_col[cnt][2];
+  int constants[cnt];
+  int num_of_filters = 0;
+  int num_of_joins = 0;
   for(int i = 0; i < cnt; i++) {
-    printf("preds: %s\n", temp_join[i]);
-	if(strstr(temp_join[i], "<") || strstr(temp_join[i], ">"))
-      printf("\tfilter\n");
-	else
-      printf("\tjoin\n");
-//	  if(strstr(temp_join[i], "."))
-//    Tokenize_rel_col(&(proj[i].rel), &(proj[i].col), temp_proj[i]);
-    free(temp_join[i]);
-  }
+    printf("\npreds: %s\n", temp_pred[i]);
+    
+    char *predicate = Allocate_and_Copy_Str(temp_pred[i]);
+    if(it_is_Join(second_col[i], &constants[i], predicate)) {
+      Tokenize_to_rel_and_col(&join_first_col[i][0], &join_first_col[i][1], temp_pred[i]);
+      printf("FIRST->rel: %d, col: %d\n", join_first_col[i][0], join_first_col[i][1]);
+      printf("SECOND->rel: %d, col: %d\n", second_col[i][0], second_col[i][1]);
+	  num_of_joins++;
+	} else {
+      Tokenize_to_rel_and_col(&filter_first_col[i][0], &filter_first_col[i][1], temp_pred[i]);
+      printf("FIRST->rel: %d, col: %d\n", filter_first_col[i][0], filter_first_col[i][1]);
+      printf("CONSTANT: %d\n", constants[i]);
+	  num_of_filters++;
+	}
 
-  return join;
+    free(temp_pred[i]);
+    free(predicate);
+  }
+  Join = (Join_Ptr)malloc(num_of_joins * sizeof(struct Join));
+  for(int i = 0; i < num_of_joins; i++) {
+   Join[i].rel1 = join_first_col[i][0];
+   Join[i].col1 = join_first_col[i][1];
+   Join[i].rel2 = second_col[i][0];
+   Join[i].col2 = second_col[i][1];
+  }
+  Filter = (Filter_Ptr)malloc(num_of_filters * sizeof(struct Filter));
+  for(int i = 0; i < num_of_filters; i++) {
+    Filter[i].rel = filter_first_col[i][0];
+    Filter[i].col = filter_first_col[i][1];
+    Filter[i].constant = constants[i];
+  }
 }
 
 static void Setup_Joins_And_Filters(Parsed_Query_Ptr Parsed_Query, Query_Ptr Query){
   int cnt = Count_Predicates(Query);
-  printf("\npredicates = %d\n", cnt);
+  //printf("\npredicates = %d\n", cnt);
 
-  Parsed_Query->Joins = Fill_Joins(Query, cnt);
+  Fill_Predicates(Query, cnt, Parsed_Query->Joins, Parsed_Query->Filters);
   //just for checking
 //  for(int i = 0; i < cnt; i++) {
-//    printf("#%d rel: %d, col: %d\n", i, Parsed_Query->Projections[i].rel, Parsed_Query->Projections[i].col);
+//    printf("#%d rel: %d, col: %d\n", i, Parsed_Query->Joins[i].rel1, Parsed_Query->Joins[i].col1);
 //  }
 }
 
@@ -159,21 +221,8 @@ static int Count_Projections(Query_Ptr Query) {
   return cnt;
 }
 
-static void Tokenize_rel_col(int *rel, int *col, char *str) {
-	//separate relation from column
-	char *temp = (char*)malloc(strlen(str) * sizeof(char));
-	strcpy(temp, str);
-	char *tok = strtok(temp, ".");
-    *rel = atoi(tok);
-    tok = strtok(NULL, ".");
-    *col = atoi(tok);
-
-    free(temp);
-}
-
 static Projection_Ptr Fill_Projection_Array(Query_Ptr Query, int cnt) {
   //tokenize
-  Projection_Ptr proj = (Projection_Ptr)malloc(cnt * sizeof(struct Projection));
   char *temp_proj[cnt];
 
   char *temp_query = Allocate_and_Copy_Str(Get_Query_Projections(Query));
@@ -185,8 +234,9 @@ static Projection_Ptr Fill_Projection_Array(Query_Ptr Query, int cnt) {
   }
   free(temp_query);
 
+  Projection_Ptr proj = (Projection_Ptr)malloc(cnt * sizeof(struct Projection));
   for(int i = 0; i < cnt; i++) {
-    Tokenize_rel_col(&(proj[i].rel), &(proj[i].col), temp_proj[i]);
+    Tokenize_to_rel_and_col(&(proj[i].rel), &(proj[i].col), temp_proj[i]);
     free(temp_proj[i]);
   }
 
@@ -210,6 +260,8 @@ Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
   Setup_Relations(Parsed_Query, Query);
 
   Setup_Joins_And_Filters(Parsed_Query,Query);
+
+  //projections
   Setup_Projections(Parsed_Query,Query);
   return Parsed_Query;
 }
@@ -256,8 +308,8 @@ int Get_Filter_Column(Filter_Ptr Filter){
   return  Filter->col;
 }
 
-int Get_Amount(Filter_Ptr Filter){
-  return Filter->amount;
+int Get_Constant(Filter_Ptr Filter){
+  return Filter->constant;
 }
 
 char* Get_Type(Filter_Ptr Filter){
