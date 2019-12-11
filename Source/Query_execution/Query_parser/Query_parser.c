@@ -37,18 +37,14 @@ struct Parsed_Query{
   int num_of_projections;
 };
 
-
 static Parsed_Query_Ptr Allocate_Parsed_query(){
   Parsed_Query_Ptr Parsed_Query = (Parsed_Query_Ptr)malloc(sizeof(struct Parsed_Query));
   Parsed_Query->Filters=NULL;
   Parsed_Query->Joins=NULL;
   Parsed_Query->relations=NULL;
   Parsed_Query->Projection=NULL;
+  return Parsed_Query;
 }
-
-
-
-
 
 void Delete_Parsed_Query(Parsed_Query_Ptr Parsed_Query){
   free(Parsed_Query->relations);
