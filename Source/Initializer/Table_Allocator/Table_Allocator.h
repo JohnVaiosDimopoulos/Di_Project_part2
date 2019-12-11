@@ -9,6 +9,7 @@
 typedef struct Table_Allocator* Table_AllocatorPtr;
 typedef struct Table* Table_Ptr;
 typedef struct Shell* Shell_Ptr;
+typedef struct Tuple* Tuple_Ptr;
 
 Table_AllocatorPtr Create_Table_Allocator(Argument_Data_Ptr);
 Table_Ptr Allocate_Table(Table_AllocatorPtr Table_Allocator);
@@ -21,6 +22,9 @@ Shell_Ptr Get_Shell_by_index(Shell_Ptr,int);
 
 uint64_t Get_num_of_tuples(Shell_Ptr);
 uint64_t Get_num_of_columns(Shell_Ptr);
+
+uint64_t Get_Data(Tuple_Ptr);
+uint64_t Get_Row_id(Tuple_Ptr);
 
 void Delete_Table_Allocator(Table_AllocatorPtr);
 void Delete_Table(Table_Ptr);
