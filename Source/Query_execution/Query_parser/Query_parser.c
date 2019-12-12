@@ -14,7 +14,7 @@ struct Join{
 struct Filter{
   int rel;
   int col;
-  char* type;
+  char type[2];
   int constant;
 };
 
@@ -115,17 +115,19 @@ static void Tokenize_to_rel_and_col(int *rel, int *col, char *str) {
     free(temp);
 }
 
-static int it_is_Join(int *second_col, int *constant, char *predicates) {
+static int it_is_Join(int *second_col, int *constant, char *predicates, char *type) {
   char *token;
   if(strstr(predicates, "<")) {
     token = strtok(predicates, "<");
     token = strtok(NULL, "<");
 	*constant = atoi(token);
+	strcpy(type, "<");
 	return 0;
   } else if(strstr(predicates, ">")) {
     token = strtok(predicates, ">");
     token = strtok(NULL, ">");
 	*constant = atoi(token);
+	strcpy(type, ">");
 	return 0;
   } else {
     token = strtok(predicates, "=");
@@ -135,6 +137,7 @@ static int it_is_Join(int *second_col, int *constant, char *predicates) {
 	  return 1;
     } else {
 	  *constant = atoi(token);
+	  strcpy(type, "=");
 	  return 0;
     }
   }
@@ -155,17 +158,20 @@ static Parsed_Query_Ptr Fill_Predicates(Query_Ptr Query, int cnt, Parsed_Query_P
   int join_first_col[cnt][2];
   int filter_first_col[cnt][2];
   int second_col[cnt][2];
+  char type_array[cnt][2];
   int constants[cnt];
   int num_of_filters = 0;
   int num_of_joins = 0;
   for(int i = 0; i < cnt; i++) {
 
     char *predicate = Allocate_and_Copy_Str(temp_pred[i]);
-    if(it_is_Join(second_col[num_of_joins], &constants[num_of_filters], predicate)) {
+    char type[2];
+    if(it_is_Join(second_col[num_of_joins], &constants[num_of_filters], predicate, type)) {
       Tokenize_to_rel_and_col(&join_first_col[num_of_joins][0], &join_first_col[num_of_joins][1], temp_pred[i]);
 	  num_of_joins++;
 	} else {
       Tokenize_to_rel_and_col(&filter_first_col[num_of_filters][0], &filter_first_col[num_of_filters][1], temp_pred[i]);
+	  strcpy(type_array[num_of_filters], type);
 	  num_of_filters++;
 	}
 
@@ -187,6 +193,7 @@ static Parsed_Query_Ptr Fill_Predicates(Query_Ptr Query, int cnt, Parsed_Query_P
    Parsed_Query->Filters[i].rel = filter_first_col[i][0];
    Parsed_Query->Filters[i].col = filter_first_col[i][1];
    Parsed_Query->Filters[i].constant = constants[i];
+   strcpy(Parsed_Query->Filters[i].type, type_array[i]);
   }
   Parsed_Query->num_of_filters = num_of_filters;
   return Parsed_Query;  
@@ -262,10 +269,11 @@ void Print_Parsed_Query(Parsed_Query_Ptr Parsed_Query) {
   printf("===FILTERS===\n");
   if (Parsed_Query->num_of_filters != 0) {
     for (int i = 0; i < Parsed_Query->num_of_filters; i++) {
-      printf("%d: %d.%d type %d",
+      printf("%d: %d.%d %s %d",
              i,
              Parsed_Query->Filters[i].rel,
              Parsed_Query->Filters[i].col,
+             Parsed_Query->Filters[i].type,
              Parsed_Query->Filters[i].constant);
     }
     printf("\n");
@@ -273,7 +281,7 @@ void Print_Parsed_Query(Parsed_Query_Ptr Parsed_Query) {
 
   printf("===PROJECTIONS===\n");
   for (int i = 0; i < Parsed_Query->num_of_projections; i++) {
-    printf("%d: %d.%d\t", Parsed_Query->Projections[i].rel, Parsed_Query->Projections[i].col);
+    printf("%d: %d.%d\t", i, Parsed_Query->Projections[i].rel, Parsed_Query->Projections[i].col);
   }
   printf("\n\n");
 
@@ -285,10 +293,12 @@ Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
   //relations
   Setup_Relations(Parsed_Query, Query);
 
+  //joins and filters
   Setup_Joins_And_Filters(Parsed_Query,Query);
 
   //projections
   Setup_Projections(Parsed_Query,Query);
+  Print_Parsed_Query(Parsed_Query);
   return Parsed_Query;
 }
 
