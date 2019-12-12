@@ -142,7 +142,7 @@ static int it_is_Join(int *second_col, int *constant, char *predicates) {
   }
 }
 
-static void Fill_Predicates(Query_Ptr Query, int cnt, Join_Ptr Join, Filter_Ptr Filter) {
+static Parsed_Query_Ptr Fill_Predicates(Query_Ptr Query, int cnt, Parsed_Query_Ptr Parsed_Query) {//Join_Ptr Join, Filter_Ptr Filter) {
   //tokenize
   char *temp_query = Allocate_and_Copy_Str(Get_Query_Predicates(Query));
   char *token = strtok(temp_query, "&");
@@ -162,47 +162,56 @@ static void Fill_Predicates(Query_Ptr Query, int cnt, Join_Ptr Join, Filter_Ptr 
   int num_of_filters = 0;
   int num_of_joins = 0;
   for(int i = 0; i < cnt; i++) {
-    printf("\npreds: %s\n", temp_pred[i]);
+//    printf("\npreds: %s\n", temp_pred[i]);
     
     char *predicate = Allocate_and_Copy_Str(temp_pred[i]);
-    if(it_is_Join(second_col[i], &constants[i], predicate)) {
-      Tokenize_to_rel_and_col(&join_first_col[i][0], &join_first_col[i][1], temp_pred[i]);
-      printf("FIRST->rel: %d, col: %d\n", join_first_col[i][0], join_first_col[i][1]);
-      printf("SECOND->rel: %d, col: %d\n", second_col[i][0], second_col[i][1]);
+    if(it_is_Join(second_col[num_of_joins], &constants[num_of_filters], predicate)) {
+      Tokenize_to_rel_and_col(&join_first_col[num_of_joins][0], &join_first_col[num_of_joins][1], temp_pred[i]);
+//      printf("FIRST->rel: %d, col: %d\n", join_first_col[num_of_joins][0], join_first_col[num_of_joins][1]);
+//      printf("SECOND->rel: %d, col: %d\n", second_col[num_of_joins][0], second_col[num_of_joins][1]);
 	  num_of_joins++;
 	} else {
-      Tokenize_to_rel_and_col(&filter_first_col[i][0], &filter_first_col[i][1], temp_pred[i]);
-      printf("FIRST->rel: %d, col: %d\n", filter_first_col[i][0], filter_first_col[i][1]);
-      printf("CONSTANT: %d\n", constants[i]);
+      Tokenize_to_rel_and_col(&filter_first_col[num_of_filters][0], &filter_first_col[num_of_filters][1], temp_pred[i]);
+//      printf("FIRST->rel: %d, col: %d\n", filter_first_col[num_of_filters][0], filter_first_col[num_of_filters][1]);
+//      printf("CONSTANT: %d\n", constants[num_of_filters]);
 	  num_of_filters++;
 	}
 
     free(temp_pred[i]);
     free(predicate);
   }
-  Join = (Join_Ptr)malloc(num_of_joins * sizeof(struct Join));
+  //joins
+  Parsed_Query->Joins = (Join_Ptr)malloc(num_of_joins * sizeof(struct Join));
   for(int i = 0; i < num_of_joins; i++) {
-   Join[i].rel1 = join_first_col[i][0];
-   Join[i].col1 = join_first_col[i][1];
-   Join[i].rel2 = second_col[i][0];
-   Join[i].col2 = second_col[i][1];
+  Parsed_Query->Joins[i].rel1 = join_first_col[i][0];
+  Parsed_Query->Joins[i].col1 = join_first_col[i][1];
+  Parsed_Query->Joins[i].rel2 = second_col[i][0];
+  Parsed_Query->Joins[i].col2 = second_col[i][1];
   }
-  Filter = (Filter_Ptr)malloc(num_of_filters * sizeof(struct Filter));
+  Parsed_Query->num_of_joins = num_of_joins;
+  //filters
+  Parsed_Query->Filters = (Filter_Ptr)malloc(num_of_filters * sizeof(struct Filter));
   for(int i = 0; i < num_of_filters; i++) {
-    Filter[i].rel = filter_first_col[i][0];
-    Filter[i].col = filter_first_col[i][1];
-    Filter[i].constant = constants[i];
+   Parsed_Query->Filters[i].rel = filter_first_col[i][0];
+   Parsed_Query->Filters[i].col = filter_first_col[i][1];
+   Parsed_Query->Filters[i].constant = constants[i];
   }
-}
-
+  Parsed_Query->num_of_filters = num_of_filters;
+  return Parsed_Query;  
+}             
+              
 static void Setup_Joins_And_Filters(Parsed_Query_Ptr Parsed_Query, Query_Ptr Query){
   int cnt = Count_Predicates(Query);
-  //printf("\npredicates = %d\n", cnt);
 
-  Fill_Predicates(Query, cnt, Parsed_Query->Joins, Parsed_Query->Filters);
+  Parsed_Query = Fill_Predicates(Query, cnt, Parsed_Query);//Parsed_Query->Joins, Parsed_Query->Filters);
   //just for checking
-//  for(int i = 0; i < cnt; i++) {
-//    printf("#%d rel: %d, col: %d\n", i, Parsed_Query->Joins[i].rel1, Parsed_Query->Joins[i].col1);
+//  for(int i = 0; i < Parsed_Query->num_of_joins; i++) {
+//    printf("#%d-> %d.%d=", i, Parsed_Query->Joins[i].rel1, Parsed_Query->Joins[i].col1);
+//    printf("%d.%d\n", Parsed_Query->Joins[i].rel2, Parsed_Query->Joins[i].col2);
+//  }
+//  for(int i = 0; i < Parsed_Query->num_of_filters; i++) {
+//    printf("#%d-> %d.%d=", i, Parsed_Query->Filters[i].rel, Parsed_Query->Filters[i].col);
+//    printf("%d\n", Parsed_Query->Filters[i].constant);
 //  }
 }
 
