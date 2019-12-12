@@ -71,7 +71,6 @@ static int Count_Relations(Query_Ptr Query) {
 }
 
 static int* Convert_Relations_to_Ints(Query_Ptr Query, int cnt) {
-  //tokenize
   int *rel = (int*)malloc(cnt * sizeof(int));
 
   char *temp = Allocate_and_Copy_Str(Get_Query_Relations(Query));
@@ -106,7 +105,6 @@ static int Count_Predicates(Query_Ptr Query) {
 }
 
 static void Tokenize_to_rel_and_col(int *rel, int *col, char *str) {
-	//separate relation from column
 	char *temp = (char*)malloc(strlen(str) * sizeof(char));
 	strcpy(temp, str);
 	char *tok = strtok(temp, ".");
@@ -142,8 +140,7 @@ static int it_is_Join(int *second_col, int *constant, char *predicates) {
   }
 }
 
-static Parsed_Query_Ptr Fill_Predicates(Query_Ptr Query, int cnt, Parsed_Query_Ptr Parsed_Query) {//Join_Ptr Join, Filter_Ptr Filter) {
-  //tokenize
+static Parsed_Query_Ptr Fill_Predicates(Query_Ptr Query, int cnt, Parsed_Query_Ptr Parsed_Query) {
   char *temp_query = Allocate_and_Copy_Str(Get_Query_Predicates(Query));
   char *token = strtok(temp_query, "&");
 
@@ -162,18 +159,13 @@ static Parsed_Query_Ptr Fill_Predicates(Query_Ptr Query, int cnt, Parsed_Query_P
   int num_of_filters = 0;
   int num_of_joins = 0;
   for(int i = 0; i < cnt; i++) {
-//    printf("\npreds: %s\n", temp_pred[i]);
-    
+
     char *predicate = Allocate_and_Copy_Str(temp_pred[i]);
     if(it_is_Join(second_col[num_of_joins], &constants[num_of_filters], predicate)) {
       Tokenize_to_rel_and_col(&join_first_col[num_of_joins][0], &join_first_col[num_of_joins][1], temp_pred[i]);
-//      printf("FIRST->rel: %d, col: %d\n", join_first_col[num_of_joins][0], join_first_col[num_of_joins][1]);
-//      printf("SECOND->rel: %d, col: %d\n", second_col[num_of_joins][0], second_col[num_of_joins][1]);
 	  num_of_joins++;
 	} else {
       Tokenize_to_rel_and_col(&filter_first_col[num_of_filters][0], &filter_first_col[num_of_filters][1], temp_pred[i]);
-//      printf("FIRST->rel: %d, col: %d\n", filter_first_col[num_of_filters][0], filter_first_col[num_of_filters][1]);
-//      printf("CONSTANT: %d\n", constants[num_of_filters]);
 	  num_of_filters++;
 	}
 
@@ -202,17 +194,7 @@ static Parsed_Query_Ptr Fill_Predicates(Query_Ptr Query, int cnt, Parsed_Query_P
               
 static void Setup_Joins_And_Filters(Parsed_Query_Ptr Parsed_Query, Query_Ptr Query){
   int cnt = Count_Predicates(Query);
-
   Parsed_Query = Fill_Predicates(Query, cnt, Parsed_Query);//Parsed_Query->Joins, Parsed_Query->Filters);
-  //just for checking
-//  for(int i = 0; i < Parsed_Query->num_of_joins; i++) {
-//    printf("#%d-> %d.%d=", i, Parsed_Query->Joins[i].rel1, Parsed_Query->Joins[i].col1);
-//    printf("%d.%d\n", Parsed_Query->Joins[i].rel2, Parsed_Query->Joins[i].col2);
-//  }
-//  for(int i = 0; i < Parsed_Query->num_of_filters; i++) {
-//    printf("#%d-> %d.%d=", i, Parsed_Query->Filters[i].rel, Parsed_Query->Filters[i].col);
-//    printf("%d\n", Parsed_Query->Filters[i].constant);
-//  }
 }
 
 
@@ -255,13 +237,48 @@ static Projection_Ptr Fill_Projection_Array(Query_Ptr Query, int cnt) {
 static void Setup_Projections(Parsed_Query_Ptr Parsed_Query, Query_Ptr Query){
   int cnt = Count_Projections(Query);
   Parsed_Query->num_of_projections = cnt;
-
   Parsed_Query->Projections = Fill_Projection_Array(Query, cnt);
-  //just for checking
-//  for(int i = 0; i < cnt; i++) {
-//    printf("#%d rel: %d, col: %d\n", i, Parsed_Query->Projections[i].rel, Parsed_Query->Projections[i].col);
-//  }
 }
+
+
+void Print_Parsed_Query(Parsed_Query_Ptr Parsed_Query) {
+  printf("===RELATIONS===\n");
+  for (int i = 0; i < Parsed_Query->num_of_relations; i++) {
+    printf("%d:%d \t", i, Parsed_Query->relations[i]);
+  }
+  printf("\n");
+
+  printf("===JOINS===\n");
+  for (int i = 0; i < Parsed_Query->num_of_joins; i++) {
+    printf("%d: %d.%d = %d.%d\t",
+           i,
+           Parsed_Query->Joins[i].rel1,
+           Parsed_Query->Joins[i].col1,
+           Parsed_Query->Joins[i].rel2,
+           Parsed_Query->Joins[i].col2);
+  }
+  printf("\n");
+
+  printf("===FILTERS===\n");
+  if (Parsed_Query->num_of_filters != 0) {
+    for (int i = 0; i < Parsed_Query->num_of_filters; i++) {
+      printf("%d: %d.%d type %d",
+             i,
+             Parsed_Query->Filters[i].rel,
+             Parsed_Query->Filters[i].col,
+             Parsed_Query->Filters[i].constant);
+    }
+    printf("\n");
+  }
+
+  printf("===PROJECTIONS===\n");
+  for (int i = 0; i < Parsed_Query->num_of_projections; i++) {
+    printf("%d: %d.%d\t", Parsed_Query->Projections[i].rel, Parsed_Query->Projections[i].col);
+  }
+  printf("\n\n");
+
+}
+
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
   Parsed_Query_Ptr Parsed_Query = Allocate_Parsed_query();
@@ -274,6 +291,8 @@ Parsed_Query_Ptr Parse_Query(Query_Ptr Query){
   Setup_Projections(Parsed_Query,Query);
   return Parsed_Query;
 }
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
