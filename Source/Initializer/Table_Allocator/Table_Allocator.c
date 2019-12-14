@@ -85,7 +85,7 @@ void Print_Table(Table_Ptr Table) {
   }
 }
 
-static void Allocate_Shell(Shell_Ptr Shell){
+void Allocate_Shell(Shell_Ptr Shell){
   Shell->Array = malloc(Shell->num_of_columns * sizeof(Tuple_Ptr));
   Shell->Array[0]=malloc((Shell->num_of_columns*Shell->num_of_tuples)* sizeof(struct Tuple));
 }
@@ -178,6 +178,14 @@ Shell_Ptr Get_Shell_by_index(Shell_Ptr Shell,int index){
   return &Shell[index];
 }
 
+Tuple_Ptr Get_Shell_Array(Shell_Ptr Shell){
+  return Shell->Array;
+}
+
+Tuple_Ptr Get_Shell_Array_by_index(Shell_Ptr Shell, int i, int j){
+  return &Shell->Array[i][j];
+}
+
 uint64_t Get_Data(Tuple_Ptr Tuple){
   return Tuple->data;
 }
@@ -185,3 +193,10 @@ uint64_t Get_Data(Tuple_Ptr Tuple){
 uint64_t Get_Row_id(Tuple_Ptr Tuple){
   return Tuple->row_id;
 }
+
+//Table_Ptr Allocate_Table_with_num_of_Shells(int num_of_shells) {
+//  Table_Ptr Table = (Table_Ptr)malloc(sizeof(Table));
+//  Table->Array = malloc(num_of_shells * sizeof(struct Shell));
+//  Table->num_of_shells = num_of_shells;
+//  return Table;
+//}

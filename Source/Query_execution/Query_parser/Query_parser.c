@@ -322,6 +322,10 @@ Filter_Ptr Get_Filters(Parsed_Query_Ptr Parsed_Query){
   return Parsed_Query->Filters;
 }
 
+Filter_Ptr Get_Filter_by_index(Filter_Ptr Filter, int i) {
+  return &Filter[i];
+}
+
 int Get_Num_of_Filters(Parsed_Query_Ptr Parsed_Query){
   return Parsed_Query->num_of_filters;
 }
