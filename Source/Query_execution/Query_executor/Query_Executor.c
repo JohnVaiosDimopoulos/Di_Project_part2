@@ -111,7 +111,8 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   Delete_Parsed_Query(Parsed_Query);
 
   //2.do the preparations
-    //2.make the execution tree
+    //2.make the execution queue
+
   //3.execute the query based on the preparation
     //1.input the execution tree + the relations we need to
     //2.get the result as an output

@@ -2,10 +2,6 @@
 #include "./Initializer/Table_Allocator/Table_Allocator.h"
 #include "./Work_Executor/Work_Executor.h"
 
-#include "Query_execution/Preparator/Preparator.h"
-#include "Query_execution/Query_executor/Query_Executor.h"
-#include "Query_execution/Query_parser/Query_parser.h"
-
 
 
 int main(int argc, char** argv){
@@ -18,7 +14,6 @@ int main(int argc, char** argv){
   Fill_Table(Table, Table_Allocator);
   Print_Table(Table);
 
-//  Read_Work_File(Arg_Data, Table);
 
   Start_Work(Table, Arg_Data);
 
