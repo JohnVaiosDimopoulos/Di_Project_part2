@@ -2,11 +2,11 @@
 #define MULTI_JOIN_QUERY_PARSER_H
 
 #include "../../Query/Query.h"
+#include "../Join_Struct/Join_Struct.h"
+#include "../Filter/Filter.h"
+#include "../Projection/Projection.h"
 
 typedef struct Parsed_Query* Parsed_Query_Ptr;
-typedef struct Join* Join_Ptr;
-typedef struct Filter* Filter_Ptr;
-typedef struct Projection* Projection_Ptr;
 
 Parsed_Query_Ptr Parse_Query(Query_Ptr);
 void Delete_Parsed_Query(Parsed_Query_Ptr Parsed_Query);
@@ -15,26 +15,21 @@ void Print_Parsed_Query(Parsed_Query_Ptr Parsed_Query);
 //Parsed_Query Accessors//
 Join_Ptr Get_Joins(Parsed_Query_Ptr Parsed_Query);
 Filter_Ptr Get_Filters(Parsed_Query_Ptr Parsed_Query);
-Filter_Ptr Get_Filter_by_index(Filter_Ptr, int);
+Projection_Ptr Get_Projections(Parsed_Query_Ptr Parsed_Query);
 int Get_Num_of_Relations(Parsed_Query_Ptr);
 int* Get_Relations(Parsed_Query_Ptr);
 int Get_Num_of_Filters(Parsed_Query_Ptr);
 int Get_Num_of_Joins(Parsed_Query_Ptr);
 
-//Filter Accessors//
-int Get_Filter_Relation(Filter_Ptr Filter);
-int Get_Filter_Column(Filter_Ptr Filter);
-int Get_Constant(Filter_Ptr Filter);
-char* Get_Type(Filter_Ptr Filter);
+//Parsed_Query Mutators
+void Set_Relations(Parsed_Query_Ptr ,int*);
+void Set_Num_of_Relations(Parsed_Query_Ptr ,int);
+void Set_num_of_join(Parsed_Query_Ptr,int);
+void Set_num_of_filters(Parsed_Query_Ptr,int);
+void Set_num_of_projections(Parsed_Query_Ptr,int);
+void Set_Joins(Parsed_Query_Ptr,Join_Ptr);
+void Set_Filters(Parsed_Query_Ptr,Filter_Ptr);
+void Set_Projections(Parsed_Query_Ptr,Projection_Ptr);
 
-//Join Accessors//
-int Get_Relation_1(Join_Ptr Join);
-int Get_Column_1(Join_Ptr Join);
-int Get_Relation_2(Join_Ptr Join);
-int Get_Column_2(Join_Ptr Join);
-
-//Projection Accessors//
-int Get_Projection_Relation(Projection_Ptr);
-int Get_Projection_Column(Projection_Ptr Projection);
 
 #endif //MULTI_JOIN_QUERY_PARSER_H

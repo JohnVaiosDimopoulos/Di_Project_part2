@@ -70,3 +70,15 @@ const char* construct_Path(const char* FileName, const char* DirName){
   sprintf(File_Path,"%s/%s",DirName,FileName);
   return File_Path;
 }
+
+
+void Tokenize_to_rel_and_col(int *rel, int *col, char *str) {
+  char *temp = (char*)malloc(strlen(str) * sizeof(char));
+  strcpy(temp, str);
+  char *tok = strtok(temp, ".");
+  *rel = atoi(tok);
+  tok = strtok(NULL, ".");
+  *col = atoi(tok);
+
+  free(temp);
+}
