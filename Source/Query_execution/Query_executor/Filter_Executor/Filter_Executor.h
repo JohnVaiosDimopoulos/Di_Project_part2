@@ -15,7 +15,7 @@ struct Filter_Result{
 
 typedef struct Filter_Result* Filter_Result_Ptr;
 
-Tuple_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *relations, int num_of_relations);
+Filter_Result_Ptr *Execute_Filters(Table_Ptr, Parsed_Query_Ptr, int *, int);
 
 
 

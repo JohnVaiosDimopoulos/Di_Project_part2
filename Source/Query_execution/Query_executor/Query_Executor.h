@@ -3,7 +3,6 @@
 
 #include "../../Initializer/Table_Allocator/Table_Allocator.h"
 #include "../../Query/Query.h"
-#include "../../Initializer/Table_Allocator/Table_Allocator.h"
 
 void Execute_Query(Query_Ptr, Table_Ptr);
 
