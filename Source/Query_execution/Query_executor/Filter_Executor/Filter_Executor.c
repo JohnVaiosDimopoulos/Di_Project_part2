@@ -8,6 +8,10 @@ void Delete_Filter_Results(Filter_Result_Ptr Results,int num_of_filters) {
   free(Results);
 }
 
+void Delete_Filter_Outcome(Filters_Outcome_Ptr Outcome){
+  Delete_Filter_Results(Outcome->Filter_Result,Outcome->num_of_filters);
+  free(Outcome);
+}
 
 static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filter) {
 
@@ -36,6 +40,7 @@ static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filte
       case '>':
         if(data_to_check > con) {
           Results->row_id[tuples] = row;
+
           tuples++;
         }
         break;
@@ -50,7 +55,7 @@ static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filte
   Results->num_of_results = tuples;
 }
 
-Filter_Result_Ptr Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *relations, int num_of_relations) {
+Filters_Outcome_Ptr  Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *relations, int num_of_relations) {
   int num_of_filters = Get_Num_of_Filters(Parsed_Query);
 
   if(num_of_filters) {
@@ -66,18 +71,42 @@ Filter_Result_Ptr Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query
       //allocate array
 	  Array[i].relation = rel;
       Array[i].row_id = (uint64_t*)malloc(num_of_tuples * sizeof(uint64_t));
+      Array[i].filter_used=0;
 
       Execute(&Array[i], Shell, Filter);
 //      for (int j = Array[i].num_of_results; j < num_of_tuples; j++) {
 //        free(&(Array[i].row_id[j]));
 //	  }
     }
-    return Array;
+
+    Filters_Outcome_Ptr Outcome = (Filters_Outcome_Ptr)malloc(sizeof(struct Filters_Outcome));
+    Outcome->num_of_filters=Get_Num_of_Filters(Parsed_Query);
+    Outcome->Filter_Result=Array;
+    return Outcome;
   }
 
   printf("QUERY HAS NO FILTERS\n");
   return NULL;
 }
+
+
+int Is_Rel_in_Filter_result_and_not_used(int relation,Filters_Outcome_Ptr Outcome){
+  if (Outcome==NULL)
+    return 0;
+  for(int i =0;i<Outcome->num_of_filters;i++){
+    if(Outcome->Filter_Result[i].relation==relation && Outcome->Filter_Result[i].filter_used==0)
+      return 1;
+  }
+  return 0;
+}
+
+int Get_Num_of_results(Filters_Outcome_Ptr Outcome,int relation ){
+  for(int i =0;i<Outcome->num_of_filters;i++){
+    if(Outcome->Filter_Result[i].relation==relation)
+      return Outcome->Filter_Result[i].num_of_results;
+  }
+}
+
 
 
 

@@ -20,11 +20,6 @@ struct Intermediate_Result{
 
 typedef struct Intermediate_Result* Intermediate_Result_ptr;
 
-
-
-
-
-
 void Execute_Joins(Execution_Queue_Ptr Execution_Queue,Filter_Result_Ptr Filter_Results,Table_Ptr Relations);
 
 

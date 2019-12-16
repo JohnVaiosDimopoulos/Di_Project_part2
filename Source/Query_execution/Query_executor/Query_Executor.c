@@ -17,8 +17,8 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   Print_Queue(Queue);
 
   //3.execute the query based on the preparation
-  Filter_Result_Ptr Array = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
-  Delete_Filter_Results(Array,Get_Num_of_Filters(Parsed_Query));
+  Filters_Outcome_Ptr Outcome = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
+  Delete_Filter_Outcome(Outcome);
   //1.input the execution tree + the relations we need to
   //2.get the result as an output
 

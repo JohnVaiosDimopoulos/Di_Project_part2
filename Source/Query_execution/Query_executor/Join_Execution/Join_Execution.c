@@ -1,26 +1,56 @@
 #include "Join_Execution.h"
+#include "../Filter_Executor/Filter_Executor.h"
 #include <stdlib.h>
 
+struct Tuple{
+  uint64_t value;
+  uint64_t row_id;
+};
+
+typedef struct Tuple* Tuple_ptr;
 
 
+static int Is_rel_in_intermediate_result(Intermediate_Result_ptr Intermediate_Result,int relation){
+  if(Intermediate_Result==NULL)
+    return 0;
+  for(int i =0;i<Intermediate_Result->num_of_relations_in_result;i++){
+    if(Intermediate_Result->relations_in_the_result[i]==relation)
+      return 1;
+  }
+
+  return 0;
+}
+
+static void Execute_Self_Join(Join_Ptr Join,Filters_Outcome_Ptr Filter_Outcome,Intermediate_Result_ptr Intermediate_Result) {
+
+  Tuple_ptr Array1,Array2;
+
+  if(Is_Rel_in_Filter_result_and_not_used(Get_Relation_1(Join),Filter_Outcome)){
+
+    int size = Get_Num_of_results(Filter_Outcome,Get_Relation_1(Join));
+    Array1 = (Tuple_ptr)malloc(size*sizeof(struct Tuple));
+    Array2 = (Tuple_ptr)malloc(size*sizeof(struct Tuple));
+
+    for(int i =0;i<size;i++){
+      Array1[i]
+    }
+
+  }
+  else if (Is_rel_in_intermediate_result(Intermediate_Result,Get_Relation_1(Join))){
+    Array1=(Tuple_ptr)malloc(Intermediate_Result->num_of_results* sizeof(struct Tuple));
+    Array2=(Tuple_ptr)malloc(Intermediate_Result->num_of_results* sizeof(struct Tuple));
 
 
-static void Execute_Self_Join(Join_Ptr Join,Filter_Result_Ptr Filter_Results,Intermediate_Result_ptr Intermediate_Result) {
+  }
+
 /*
-    if(is in the filters result and the filter is not used yet){
-        get the row_ids/value for each column based on the filter
-    }
-    else if(is the relation in the indermediate result){
-      get the row_ids/value for each column based on the result
-    }
-
-
    for(int i =0;i<num_of_rows;i++){
     if(col1.value == col2.value)
       result.insert(rows[i]);
    }
 
-   return result;*/
+   return result;
+*/
 }
 
 static int Check_if_relations_already_in_result(Join_Ptr Join,Intermediate_Result_ptr Intermediate_Result){
@@ -55,21 +85,16 @@ void Execute_Joins(Execution_Queue_Ptr Execution_Queue,Filter_Result_Ptr Filter_
       Current_Join!=NULL;
       Current_Join=Pop_Next_join(Execution_Queue)){
 
-    if(Is_Self_Join(Current_Join)){
-      //execute_Self_Join
-    }
+    if(Is_Self_Join(Current_Join))
+      Execute_Self_Join(Current_Join,Filter_Results,Intermediate_Result);
 
-    else if(Check_if_relations_already_in_result(Current_Join,Intermediate_Result)){
+    else if(Check_if_relations_already_in_result(Current_Join,Intermediate_Result))
         Execute_Scan_Join(Current_Join,Intermediate_Result);
-    }
 
-    else if (Is_Same_Column_used(Last_Join,Current_Join)){
+    else if (Is_Same_Column_used(Last_Join,Current_Join)){}
       //execute join with same column
 
-    }
-
     else{
-
       //normal_join
     }
 
