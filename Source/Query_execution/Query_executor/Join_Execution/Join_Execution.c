@@ -3,6 +3,8 @@
 
 
 
+
+
 static void Execute_Self_Join(Join_Ptr Join,Filter_Result_Ptr Filter_Results) {
 //
 //    if(is in the filters result and the filter is not used yet){
@@ -22,6 +24,11 @@ static void Execute_Self_Join(Join_Ptr Join,Filter_Result_Ptr Filter_Results) {
 //   return result;
 }
 
+static int Check_if_relations_already_in_result(Join_Ptr Join){
+
+}
+
+static void Execute_Scan(Join_Ptr Join,){}
 
 
 
@@ -36,6 +43,10 @@ void Execute_Joins(Execution_Queue_Ptr Execution_Queue,Filter_Result_Ptr Filter_
 
     if(Is_Self_Join(Current_Join)){
       //execute_Self_Join
+    }
+
+    else if(Check_if_relations_already_in_result(Current_Join)){
+
     }
 
     else if (Is_Same_Column_used(Last_Join,Current_Join)){
