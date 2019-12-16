@@ -14,15 +14,39 @@ struct Execution_Queue_Node{
 
 typedef struct Execution_Queue_Node* Execution_Queue_Node_Ptr;
 
+int Is_Empty(Execution_Queue_Ptr Execution_Queue){
+  return Execution_Queue->head==NULL;
+}
+
+static void Delete_Node(Execution_Queue_Node_Ptr Node){
+  Node->Join=NULL;
+  Node->next=NULL;
+  free(Node);
+}
+
+void Delete_Queue(Execution_Queue_Ptr Execution_Queue){
+  Execution_Queue_Node_Ptr current= Execution_Queue->head;
+  Execution_Queue->head=NULL;
+  Execution_Queue->tail=NULL;
+  while (current!=NULL){
+    Execution_Queue_Node_Ptr temp = current;
+    current=temp->next;
+    free(temp);
+  }
+  free(Execution_Queue);
+}
+
 Execution_Queue_Ptr Create_Execution_Queue(){
   Execution_Queue_Ptr Execution_Queue = (Execution_Queue_Ptr)malloc(sizeof( struct Execution_Queue));
   Execution_Queue->head=NULL;
+  Execution_Queue->tail=NULL;
   return Execution_Queue;
 }
 
 Execution_Queue_Node_Ptr Create_New_Node(Join_Ptr Join){
   Execution_Queue_Node_Ptr new_node = (Execution_Queue_Node_Ptr)malloc(sizeof(struct Execution_Queue_Node));
   new_node->Join=Join;
+  new_node->next=NULL;
   return new_node;
 
 }
@@ -53,6 +77,7 @@ int Is_in_Queue(Join_Ptr Join_tested,Execution_Queue_Ptr Execution_Queue){
   while(temp!=NULL){
     if(Is_the_Same_Join(temp->Join,Join_tested))
       return 1;
+    temp=temp->next;
   }
   return 0;
 }
@@ -70,7 +95,9 @@ void Print_Queue(Execution_Queue_Ptr Execution_Queue){
     printf("(");
     Print_Join(temp->Join);
     printf(")->");
+    temp=temp->next;
   }
+  printf("\n\n");
 }
 
 

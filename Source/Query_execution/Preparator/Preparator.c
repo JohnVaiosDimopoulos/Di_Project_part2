@@ -21,11 +21,12 @@ static void Check_For_Same_Column_joins(Parsed_Query_Ptr Parsed_Query,Execution_
       continue;
 
     for(int j =0;j<Get_Num_of_Joins(Parsed_Query);j++){
-      Join_Ptr Next_Join = Get_Join_by_index(Joins_Array,i);
+      Join_Ptr Next_Join = Get_Join_by_index(Joins_Array,j);
       if(Is_in_Queue(Next_Join,Execution_Queue))
         continue;
-      if(Is_Same_Column_used(Current_Join,Next_Join)){
-        Insert_Node(Current_Join,Execution_Queue);
+      if(Is_Same_Column_used(Current_Join,Next_Join) && !Is_the_Same_Join(Current_Join,Next_Join)){
+        if(!Is_in_Queue(Current_Join,Execution_Queue))
+          Insert_Node(Current_Join,Execution_Queue);
         Insert_Node(Next_Join,Execution_Queue);
       }
     }
@@ -37,6 +38,11 @@ static void Organize_Joins(Parsed_Query_Ptr Parsed_Query,Execution_Queue_Ptr Exe
 
   for(int i =0;i<Get_Num_of_Joins(Parsed_Query);i++){
     Join_Ptr Current_Join = Get_Join_by_index(Join_Array,i);
+    if(Is_Empty(Execution_Queue)){
+      Insert_Node(Current_Join,Execution_Queue);
+      continue;
+    }
+
     if(Is_in_Queue(Current_Join,Execution_Queue))
       continue;
     if(Connects_with_last_join(Current_Join,Execution_Queue))

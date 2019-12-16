@@ -38,12 +38,25 @@ int Is_Same_Column_used(Join_Ptr Join_1,Join_Ptr Join_2){
 }
 
 int Is_the_Same_Join(Join_Ptr Join_1,Join_Ptr Join_2){
-    if(Join_1->rel1==Join_2->rel1)
+  if(Join_1->rel1 == Join_2->rel2 &&
+     Join_1->col1==Join_2->col2 &&
+     Join_1->rel2== Join_2->rel1 &&
+     Join_1->col2 == Join_2->col1)
+    return 1;
+
+  else if(
+      Join_1->rel1==Join_2->rel1 &&
+      Join_1->col1==Join_2->col1 &&
+      Join_1->rel2==Join_2->rel2 &&
+      Join_1->col2==Join_2->col2)
     return 1;
   return 0;
 }
 
 int Check_if_joins_Connect(Join_Ptr Join_1,Join_Ptr Join_2){
+  if(Join_1->rel1==Join_2->rel1 || Join_1->rel1==Join_2->rel2 || Join_1->rel2==Join_2->rel1 || Join_1->rel2==Join_2->rel2)
+    return 1;
+  return 0;
 
 }
 

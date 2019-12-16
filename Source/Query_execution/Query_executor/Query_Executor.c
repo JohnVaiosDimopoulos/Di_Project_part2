@@ -1,6 +1,7 @@
 #include "Query_Executor.h"
 #include <string.h>
 #include "../Query_parser/Query_parser.h"
+#include "../Preparator/Preparator.h"
 
 
 struct Tuple{
@@ -104,9 +105,13 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   Parsed_Query_Ptr Parsed_Query = Parse_Query(Query);
   int num_of_relations = Get_Num_of_Relations(Parsed_Query);
   int *relations = Get_Relations(Parsed_Query);
+  Execution_Queue_Ptr Queue = Prepare_Execution_Queue(Parsed_Query);
+  Print_Queue(Queue);
+  Delete_Queue(Queue);
+
 
   //execute filters first
-  Tuple_Ptr *Array = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
+//  Tuple_Ptr *Array = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
   
   Delete_Parsed_Query(Parsed_Query);
 
