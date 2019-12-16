@@ -9,7 +9,7 @@ struct Tuple{
   uint64_t row_id;
 };
 
-static void Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp) {
+static void Execute_Filter(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp) {
   //get filter content
   int rel = Get_Filter_Relation(Filter);
   int col = Get_Filter_Column(Filter);
@@ -57,7 +57,7 @@ static void Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp
   }
 }
 
-Tuple_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *relations, int num_of_relations) {
+static Tuple_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *relations, int num_of_relations) {
   int num_of_filters = Get_Num_of_Filters(Parsed_Query); 
 
   if(num_of_filters) {
@@ -67,7 +67,7 @@ Tuple_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *
       Filter_Ptr Filter = Get_Filter_by_index(Get_Filters(Parsed_Query), i);
 
       int rel = relations[Get_Filter_Relation(Filter)];
-      printf("rel %d\n", rel);
+  //    printf("rel %d\n", rel);
       Shell_Ptr Shell = Get_Shell_by_index(Get_Table_Array(Table), rel);
       uint64_t num_of_tuples = Get_num_of_tuples(Shell);
       uint64_t num_of_columns = Get_num_of_columns(Shell);
@@ -75,7 +75,7 @@ Tuple_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *
       Array = (Tuple_Ptr*)malloc(num_of_columns * sizeof(Tuple_Ptr));
       Array[0]= (Tuple_Ptr)malloc((num_of_columns * num_of_tuples)* sizeof(struct Tuple));
 	  fprintf(fp, "REL %d\n", i);
-      Execute(Array, Shell, Filter, fp);
+      Execute_Filter(Array, Shell, Filter, fp);
 
       //just for checking the array  
 //      FILE *fp1 = fopen("test1", "w");
@@ -111,7 +111,7 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
 
 
   //execute filters first
-//  Tuple_Ptr *Array = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
+  Tuple_Ptr *Array = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
   
   Delete_Parsed_Query(Parsed_Query);
 
