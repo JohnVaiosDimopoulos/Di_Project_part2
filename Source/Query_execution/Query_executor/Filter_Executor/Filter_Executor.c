@@ -2,7 +2,7 @@
 #include "string.h"
 
 
-static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp) {
+static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filter) {
 
   //get filter content
   int rel = Get_Filter_Relation(Filter);
@@ -13,7 +13,6 @@ static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filte
 
   int tuples = 0;
 
-  fprintf(fp, "REL %d\n", Results->relation);
   for(int i =0; i < Get_num_of_tuples(Shell); i++){
 
     Tuple_Ptr current = Get_Shell_Array_by_index(Shell, col, i);
@@ -23,21 +22,18 @@ static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filte
     switch(type[0]) {
       case '<':
         if(data_to_check < con) {
-	      fprintf(fp, "(%llu)\n", row);
           Results->row_id[tuples] = row;
           tuples++;
         }
         break;
       case '>':
         if(data_to_check > con) {
-	      fprintf(fp, "(%llu)\n", row);
           Results->row_id[tuples] = row;
           tuples++;
         }
         break;
       case '=':
         if(data_to_check ==  con) {
-	      fprintf(fp, "(%llu)\n", row);
           Results->row_id[tuples] = row;
           tuples++;
         }
@@ -52,8 +48,6 @@ Filter_Result_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Quer
   int num_of_filters = Get_Num_of_Filters(Parsed_Query);
 
   if(num_of_filters) {
-    //Tuple_Ptr *Array;
-	FILE *fp = fopen("test", "w");
     Filter_Result_Ptr *Array = (Filter_Result_Ptr*)malloc(num_of_filters * sizeof(Filter_Result_Ptr));
 
     for (int i = 0; i < num_of_filters; i++) {
@@ -68,9 +62,11 @@ Filter_Result_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Quer
 	  Array[i]->relation = rel;
       Array[i]->row_id = (uint64_t*)malloc(num_of_tuples * sizeof(uint64_t));
 
-      Execute(Array[i], Shell, Filter, fp);
+      Execute(Array[i], Shell, Filter);
+      for (int j = Array[i]->num_of_results; j < num_of_tuples; j++) {
+        free((Array[i]->row_id[j]));
+	  }
     }
-    fclose(fp);
     return Array;
   }
 
