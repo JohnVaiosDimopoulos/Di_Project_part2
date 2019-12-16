@@ -1,10 +1,13 @@
 #include "Filter_Executor.h"
 #include "string.h"
 
-void Delete_Filter_Result(Filter_Result_Ptr Results) {
-  free(Results->row_id);
+void Delete_Filter_Results(Filter_Result_Ptr Results,int num_of_filters) {
+  for(int i=0;i<num_of_filters;i++){
+    free(Results[i].row_id);
+  }
   free(Results);
 }
+
 
 static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filter) {
 

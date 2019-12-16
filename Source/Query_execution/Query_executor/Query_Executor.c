@@ -15,16 +15,10 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   //2.do the preparations
   Execution_Queue_Ptr Queue = Prepare_Execution_Queue(Parsed_Query);
   Print_Queue(Queue);
-  //make copies of the rel in use
-
 
   //3.execute the query based on the preparation
-  //Tuple_Ptr *Array = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
   Filter_Result_Ptr Array = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
-  int num_of_filters = Get_Num_of_Filters(Parsed_Query);
-  for (int i = 0; i < num_of_filters; i++) {
-    Delete_Filter_Result(&Array[i]);
-  }
+  Delete_Filter_Results(Array,Get_Num_of_Filters(Parsed_Query));
   //1.input the execution tree + the relations we need to
   //2.get the result as an output
 
