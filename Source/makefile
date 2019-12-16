@@ -1,11 +1,28 @@
 CC = gcc
 CFLAGS  = -g -Wall
 
-main: main.o Initializer/Argument_Manager/Argument_Manager.o Initializer/Argument_Data/Arguments_Data.o Initializer/Table_Allocator/Table_Allocator.o Util/Utilities.o Work_Reader/Work_Reader.o Work_Executor/Work_Executor.o Batch/Batch.o Query/Query.o Query_execution/Preparator/Preparator.o Query_execution/Query_executor/Query_Executor.o Query_execution/Query_parser/Query_parser.o    
 
-	$(CC) $(CFLAGS) -o main main.o Argument_Manager.o Arguments_Data.o Table_Allocator.o Utilities.o Work_Reader.o Work_Executor.o Batch.o Query.o Preparator.o Query_Executor.o Query_parser.o    
+#Source/Query_execution/Query_parser/Parse_Predicates/Parse_Predicates.c
+#Source/Query_execution/Query_parser/Parse_Predicates/Parse_Predicates.h
+#Source/Query_execution/Query_parser/Parse_Projections/Parse_Projections.c
+#Source/Query_execution/Query_parser/Parse_Projections/Parse_Projections.h
+#Source/Query_execution/Query_parser/Parse_Relations/Parse_Relations.c
+#Source/Query_execution/Query_parser/Parse_Relations/Parse_Relations.h
 
-main.o: main.c Initializer/Argument_Manager/Argument_Manager.h Initializer/Argument_Data/Arguments_Data.h Initializer/Table_Allocator/Table_Allocator.h Util/Utilities.h Work_Reader/Work_Reader.h Work_Executor/Work_Executor.h Batch/Batch.h Query/Query.h Query_execution/Preparator/Preparator.h Query_execution/Query_executor/Query_Executor.h Query_execution/Query_parser/Query_parser.h    
+#Query_execution/Filter/Filter.c
+#Query_execution/Filter/Filter.h
+#Query_execution/Join_Struct/Join_Struct.c
+#Query_execution/Join_Struct/Join_Struct.h
+#Query_execution/Projection/Projection.c
+#Query_execution/Projection/Projection.h
+
+#Query_execution/Execution_Queue/Execution_Queue.c
+
+main: main.o Initializer/Argument_Manager/Argument_Manager.o Initializer/Argument_Data/Arguments_Data.o Initializer/Table_Allocator/Table_Allocator.o Util/Utilities.o Work_Reader/Work_Reader.o Work_Executor/Work_Executor.o Batch/Batch.o Query/Query.o Query_execution/Preparator/Preparator.o Query_execution/Query_parser/Parse_Relations/Parse_Relations.o Query_execution/Query_parser/Parse_Predicates/Parse_Predicates.o Query_execution/Query_parser/Parse_Projections/Parse_Projections.o Query_execution/Query_parser/Query_parser.o Query_execution/Filter/Filter.o Query_execution/Join_Struct/Join_Struct.o Query_execution/Projection/Projection.o Query_execution/Execution_Queue/Execution_Queue.o Query_execution/Query_executor/Query_Executor.o
+
+	$(CC) $(CFLAGS) -o main main.o Argument_Manager.o Arguments_Data.o Table_Allocator.o Utilities.o Work_Reader.o Work_Executor.o Batch.o Query.o Preparator.o Parse_Relations.o Parse_Predicates.o Parse_Projections.o Query_parser.o Filter.o Join_Struct.o Projection.o Execution_Queue.o Query_Executor.o 
+
+main.o: main.c Initializer/Argument_Manager/Argument_Manager.h Initializer/Argument_Data/Arguments_Data.h Initializer/Table_Allocator/Table_Allocator.h Util/Utilities.h Work_Reader/Work_Reader.h Work_Executor/Work_Executor.h Batch/Batch.h Query/Query.h Query_execution/Preparator/Preparator.h Query_execution/Query_parser/Parse_Relations/Parse_Relations.h Query_execution/Query_parser/Parse_Predicates/Parse_Predicates.h Query_execution/Query_parser/Parse_Projections/Parse_Projections.h Query_execution/Query_parser/Query_parser.h Query_execution/Filter/Filter.h Query_execution/Join_Struct/Join_Struct.h Query_execution/Projection/Projection.h Query_execution/Query_executor/Query_Executor.h Query_execution/Execution_Queue/Execution_Queue.h     
 	$(CC) -c main.c 
 
 Util/Utilities.o: Util/Utilities.c Util/Utilities.h
@@ -15,12 +32,40 @@ Util/Utilities.o: Util/Utilities.c Util/Utilities.h
 Query_execution/Preparator/Preparator.o: Query_execution/Preparator/Preparator.c Query_execution/Preparator/Preparator.h        
 	$(CC) -c Query_execution/Preparator/Preparator.c
 
+######################################################
+
 Query_execution/Query_executor/Query_Executor.o: Query_execution/Query_executor/Query_Executor.c Query_execution/Query_executor/Query_Executor.h
 	$(CC) -c Query_execution/Query_executor/Query_Executor.c
+
+Query_execution/Execution_Queue/Execution_Queue.o: Query_execution/Execution_Queue/Execution_Queue.c Query_execution/Execution_Queue/Execution_Queue.h
+	$(CC) -c Query_execution/Execution_Queue/Execution_Queue.c
+
+Query_execution/Filter/Filter.o: Query_execution/Filter/Filter.c Query_execution/Filter/Filter.h
+	$(CC) -c Query_execution/Filter/Filter.c
+
+Query_execution/Join_Struct/Join_Struct.o: Query_execution/Join_Struct/Join_Struct.c Query_execution/Join_Struct/Join_Struct.h
+	$(CC) -c Query_execution/Join_Struct/Join_Struct.c
+
+Query_execution/Projection/Projection.o: Query_execution/Projection/Projection.c Query_execution/Projection/Projection.h
+	$(CC) -c Query_execution/Projection/Projection.c
+
+######################################################
 
 Query_execution/Query_parser/Query_parser.o: Query_execution/Query_parser/Query_parser.c Query_execution/Query_parser/Query_parser.h 
 	$(CC) -c Query_execution/Query_parser/Query_parser.c    
 
+Query_execution/Query_parser/Parse_Relations/Parse_Relations.o: Query_execution/Query_parser/Parse_Relations/Parse_Relations.c Query_execution/Query_parser/Parse_Relations/Parse_Relations.h 
+	$(CC) -c Query_execution/Query_parser/Parse_Relations/Parse_Relations.c
+
+Query_execution/Query_parser/Parse_Predicates/Parse_Predicates.o: Query_execution/Query_parser/Parse_Predicates/Parse_Predicates.c Query_execution/Query_parser/Parse_Predicates/Parse_Predicates.h 
+	$(CC) -c Query_execution/Query_parser/Parse_Predicates/Parse_Predicates.c    
+
+Query_execution/Query_parser/Parse_Projections/Parse_Projections.o: Query_execution/Query_parser/Parse_Projections/Parse_Projections.c Query_execution/Query_parser/Parse_Projections/Parse_Projections.h 
+	$(CC) -c Query_execution/Query_parser/Parse_Projections/Parse_Projections.c 
+
+######################################################
+######################################################
+######################################################
 
 Query/Query.o: Query/Query.c Query/Query.h
 	$(CC) -c Query/Query.c

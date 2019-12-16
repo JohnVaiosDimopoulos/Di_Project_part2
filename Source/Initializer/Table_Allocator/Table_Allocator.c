@@ -179,7 +179,7 @@ Shell_Ptr Get_Shell_by_index(Shell_Ptr Shell,int index){
 }
 
 Tuple_Ptr Get_Shell_Array(Shell_Ptr Shell){
-  return Shell->Array;
+  return *Shell->Array;
 }
 
 Tuple_Ptr Get_Shell_Array_by_index(Shell_Ptr Shell, int i, int j){
