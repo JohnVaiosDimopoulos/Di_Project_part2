@@ -1,6 +1,10 @@
 #include "Filter_Executor.h"
 #include "string.h"
 
+void Delete_Filter_Result(Filter_Result_Ptr Results) {
+  free(Results->row_id);
+  free(Results);
+}
 
 static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filter) {
 
@@ -19,7 +23,6 @@ static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filte
     uint64_t data_to_check = Get_Data(current);
     Tuple_Ptr Tuples = Get_Shell_Array_by_index(Shell, 0, i);
     uint64_t row = Get_Row_id(Tuples);
-
     switch(type[0]) {
       case '<':
         if(data_to_check < con) {
@@ -60,10 +63,12 @@ Filter_Result_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Quer
       //allocate array
       Array[i] = (Filter_Result_Ptr)malloc(sizeof(struct Filter_Result));
 	  Array[i]->relation = rel;
-	  Array[i]->filter_used=0;
       Array[i]->row_id = (uint64_t*)malloc(num_of_tuples * sizeof(uint64_t));
 
       Execute(Array[i], Shell, Filter);
+//      for (int j = Array[i]->num_of_results; j < num_of_tuples; j++) {
+//        free((Array[i]->row_id[j]));
+//	  }
     }
     return Array;
   }
@@ -71,3 +76,17 @@ Filter_Result_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Quer
   printf("QUERY HAS NO FILTERS\n");
   return NULL;
 }
+
+//      FILE *fp1 = fopen("test1", "w");
+//      int j = 0;
+//      for(int i =0;i< num_of_tuples * num_of_columns;i++) {
+//        fprintf(fp1,"(%llu)", Array[0][i].row_id);
+//        fprintf(fp1, "%llu|", Array[0][i].data);
+//        j++;
+//        if(j == num_of_columns) {
+//          fprintf(fp1, "\n");
+//          j = 0;
+//        }
+//      }
+//      fclose(fp1);
+
