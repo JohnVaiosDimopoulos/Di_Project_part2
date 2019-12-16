@@ -17,6 +17,8 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   //2.do the preparations
   Execution_Queue_Ptr Queue = Prepare_Execution_Queue(Parsed_Query);
   Print_Queue(Queue);
+  //make copies of the rel in use
+
 
   //3.execute the query based on the preparation
   Tuple_Ptr *Array = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
