@@ -2,7 +2,7 @@
 #include "string.h"
 
 
-static void Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp) {
+static void Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter) {
 
   //get filter content
   int rel = Get_Filter_Relation(Filter);
@@ -24,7 +24,6 @@ static void Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp
       switch(type[0]) {
         case '<':
           if(data_to_check < con) {
-            fprintf(fp, "(%llu)%llu|", row, data);
             New[0][tuples].data = data;
             New[0][tuples].row_id = row;
             tuples++;
@@ -32,7 +31,6 @@ static void Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp
           break;
         case '>':
           if(data_to_check > con) {
-            fprintf(fp, "(%llu)%llu|", row, data);
             New[0][tuples].data = data;
             New[0][tuples].row_id = row;
             tuples++;
@@ -40,7 +38,6 @@ static void Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp
           break;
         case '=':
           if(data_to_check ==  con) {
-            fprintf(fp, "(%llu)%llu|", row, data);
             New[0][tuples].data = data;
             New[0][tuples].row_id = row;
             tuples++;
@@ -48,7 +45,7 @@ static void Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp
           break;
       }
     }
-    fprintf(fp,"\n");
+//    fprintf(fp,"\n");
   }
 }
 
@@ -56,11 +53,10 @@ Tuple_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *
   int num_of_filters = Get_Num_of_Filters(Parsed_Query);
 
   if(num_of_filters) {
-    FILE *fp = fopen("test", "w");
     Tuple_Ptr *Array;
+
     for (int i = 0; i < num_of_filters; i++) {
       Filter_Ptr Filter = Get_Filter_by_index(Get_Filters(Parsed_Query), i);
-
       int rel = relations[Get_Filter_Relation(Filter)];
       printf("rel %d\n", rel);
       Shell_Ptr Shell = Get_Shell_by_index(Get_Table_Array(Table), rel);
@@ -70,10 +66,8 @@ Tuple_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *
       //allocate array
       Array = (Tuple_Ptr*)malloc(num_of_columns * sizeof(Tuple_Ptr));
       Array[0]= (Tuple_Ptr)malloc((num_of_columns * num_of_tuples)* sizeof(struct Tuple));
-      fprintf(fp, "REL %d\n", i);
 
-      Execute(Array, Shell, Filter, fp);
-      fclose(fp);
+      Execute(Array, Shell, Filter);
     }
 
     return Array;

@@ -5,12 +5,13 @@
 #include "../../Query_parser/Query_parser.h"
 #include "../../../Initializer/Table_Allocator/Table_Allocator.h"
 
-struct Tuple{
-  uint64_t data;
-  uint64_t row_id;
+
+struct Filter_Result{
+  int relation;
+  uint64_t * row_id;
 };
 
-typedef struct Tuple* Tuple_Ptr;
+typedef struct Filter_Result* Filter_Result_Ptr;
 
 Tuple_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *relations, int num_of_relations);
 
