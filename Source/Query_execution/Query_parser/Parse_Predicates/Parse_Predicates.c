@@ -6,10 +6,6 @@
 #include <stdlib.h>
 
 
-
-
-
-
 static int Count_Predicates(Query_Ptr Query) {
   char* temp = Allocate_and_Copy_Str(Get_Query_Predicates(Query));
   char* token = strtok(temp, "&");

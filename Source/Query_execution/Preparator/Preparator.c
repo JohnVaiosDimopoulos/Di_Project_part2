@@ -57,7 +57,7 @@ Execution_Queue_Ptr Prepare_Execution_Queue(Parsed_Query_Ptr Parsed_Query){
   Check_For_Self_joins(Parsed_Query,Execution_Queue);
   //2.check for joins with  the same column
   Check_For_Same_Column_joins(Parsed_Query,Execution_Queue);
-  //3.make sure that every consecutive join conects
+  //3.make sure that every consecutive join connects
   Organize_Joins(Parsed_Query,Execution_Queue);
   return Execution_Queue;
 
