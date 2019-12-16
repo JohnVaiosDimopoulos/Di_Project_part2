@@ -47,11 +47,11 @@ static void Execute(Filter_Result_Ptr Results, Shell_Ptr Shell, Filter_Ptr Filte
   Results->num_of_results = tuples;
 }
 
-Filter_Result_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *relations, int num_of_relations) {
+Filter_Result_Ptr Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query, int *relations, int num_of_relations) {
   int num_of_filters = Get_Num_of_Filters(Parsed_Query);
 
   if(num_of_filters) {
-    Filter_Result_Ptr *Array = (Filter_Result_Ptr*)malloc(num_of_filters * sizeof(Filter_Result_Ptr));
+    Filter_Result_Ptr Array = (Filter_Result_Ptr)malloc(num_of_filters * sizeof(struct Filter_Result));
 
     for (int i = 0; i < num_of_filters; i++) {
       Filter_Ptr Filter = Get_Filter_by_index(Get_Filters(Parsed_Query), i);
@@ -61,13 +61,12 @@ Filter_Result_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Quer
       uint64_t num_of_columns = Get_num_of_columns(Shell);
 
       //allocate array
-      Array[i] = (Filter_Result_Ptr)malloc(sizeof(struct Filter_Result));
-	  Array[i]->relation = rel;
-      Array[i]->row_id = (uint64_t*)malloc(num_of_tuples * sizeof(uint64_t));
+	  Array[i].relation = rel;
+      Array[i].row_id = (uint64_t*)malloc(num_of_tuples * sizeof(uint64_t));
 
-      Execute(Array[i], Shell, Filter);
-//      for (int j = Array[i]->num_of_results; j < num_of_tuples; j++) {
-//        free((Array[i]->row_id[j]));
+      Execute(&Array[i], Shell, Filter);
+//      for (int j = Array[i].num_of_results; j < num_of_tuples; j++) {
+//        free(&(Array[i].row_id[j]));
 //	  }
     }
     return Array;
@@ -77,16 +76,5 @@ Filter_Result_Ptr* Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Quer
   return NULL;
 }
 
-//      FILE *fp1 = fopen("test1", "w");
-//      int j = 0;
-//      for(int i =0;i< num_of_tuples * num_of_columns;i++) {
-//        fprintf(fp1,"(%llu)", Array[0][i].row_id);
-//        fprintf(fp1, "%llu|", Array[0][i].data);
-//        j++;
-//        if(j == num_of_columns) {
-//          fprintf(fp1, "\n");
-//          j = 0;
-//        }
-//      }
-//      fclose(fp1);
+
 

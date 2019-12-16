@@ -15,7 +15,7 @@ struct Filter_Result{
 
 typedef struct Filter_Result* Filter_Result_Ptr;
 
-Filter_Result_Ptr *Execute_Filters(Table_Ptr, Parsed_Query_Ptr, int *, int);
+Filter_Result_Ptr Execute_Filters(Table_Ptr, Parsed_Query_Ptr, int *, int);
 void Delete_Filter_Result(Filter_Result_Ptr);
 
 #endif //MULTI_JOIN_FILTER_EXECUTOR_H

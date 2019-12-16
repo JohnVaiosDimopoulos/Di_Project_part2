@@ -28,7 +28,7 @@ static int Check_if_relations_already_in_result(Join_Ptr Join){
 
 }
 
-static void Execute_Scan(Join_Ptr Join,){}
+//static void Execute_Scan(Join_Ptr Join,){}
 
 
 
