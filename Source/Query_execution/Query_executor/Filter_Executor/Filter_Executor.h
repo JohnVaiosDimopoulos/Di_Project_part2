@@ -8,6 +8,7 @@
 
 struct Filter_Result{
   int relation;
+  int filter_used;
   uint64_t * row_id;
 };
 
