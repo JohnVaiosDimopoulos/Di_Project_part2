@@ -16,7 +16,7 @@ struct Table {
 };
 
 struct Tuple{
-  uint64_t data;
+  uint64_t element;
   uint64_t row_id;
 };
 
@@ -70,7 +70,7 @@ void Print_Relation(Tuple_Ptr* Relation,int num_of_tuples,int num_of_columns){
   for(int i =0;i<num_of_tuples;i++){
     for(int j=0;j<num_of_columns;j++){
       printf("(%llu)",Relation[j][i].row_id);
-      printf("%llu",Relation[j][i].data);
+      printf("%llu",Relation[j][i].element);
     }
     printf("\n");
   }
@@ -82,7 +82,7 @@ static void Print_Shell(Shell_Ptr Shell, FILE *fp) {
   for(int i =0;i<Shell->num_of_tuples;i++){
     for(int j =0;j<Shell->num_of_columns;j++) {
       fprintf(fp,"(%llu)",Shell->Array[j][i].row_id);
-      fprintf(fp, "%llu|", Shell->Array[j][i].data);
+      fprintf(fp, "%llu|", Shell->Array[j][i].element);
 	}
     fprintf(fp,"\n");
   }
@@ -90,7 +90,7 @@ static void Print_Shell(Shell_Ptr Shell, FILE *fp) {
 
 void Print_Table(Table_Ptr Table) {
   FILE *fp;
-  Open_File_for_Write(&fp, "data.txt");
+  Open_File_for_Write(&fp, "element.txt");
   for(int i = 0; i < Table->num_of_shells; i++){
     fprintf(fp,"=====REL %d=====\n",i);
     Print_Shell(&Table->Array[i], fp);
@@ -113,7 +113,7 @@ static void Read_from_File(uint64_t* data ,FILE* fp){
 static void Read_Data(Shell_Ptr Shell,FILE* fp){
   for(int i =0;i<Shell->num_of_columns;i++){
     for(int j=0;j<Shell->num_of_tuples;j++){
-      Read_from_File(&Shell->Array[i][j].data,fp);
+      Read_from_File(&Shell->Array[i][j].element, fp);
       Shell->Array[i][j].row_id=j;
     }
   }
@@ -162,7 +162,7 @@ Table_Ptr Make_Table_For_Joins(Table_Ptr Relations, int* relations,int num_of_re
     Setup_Column_Pointers(New_Table->Array[i].Array,num_of_columns,num_of_tuples);
     for(int j =0;j<num_of_columns;j++){
       for(int k=0;k<num_of_tuples;k++){
-        New_Table->Array[i].Array[j][k].data = Relations->Array[Original_Shell_index].Array[j][k].data;
+        New_Table->Array[i].Array[j][k].element = Relations->Array[Original_Shell_index].Array[j][k].element;
         New_Table->Array[i].Array[j][k].row_id = Relations->Array[Original_Shell_index].Array[j][k].row_id;
       }
 
@@ -237,7 +237,7 @@ Tuple_Ptr Get_Shell_Array_by_index(Shell_Ptr Shell, int i, int j){
 }
 
 uint64_t Get_Data(Tuple_Ptr Tuple){
-  return Tuple->data;
+  return Tuple->element;
 }
 
 uint64_t Get_Row_id(Tuple_Ptr Tuple){

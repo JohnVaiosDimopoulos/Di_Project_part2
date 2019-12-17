@@ -6,7 +6,7 @@
 
 
 struct Tuple{
-  uint64_t data;
+  uint64_t element;
   uint64_t row_id;
 };
 
