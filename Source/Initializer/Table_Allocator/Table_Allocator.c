@@ -108,13 +108,15 @@ static void Read_Data(Shell_Ptr Shell,FILE* fp){
   }
 }
 
-static void Setup_Column_Pointers(Shell_Ptr Shell){
+void Setup_Column_Pointers(Tuple_Ptr* Array,int num_of_columns,int num_of_tuples){
   int last_index = 0;
-  for(int i =1;i<Shell->num_of_columns;i++){
-    Shell->Array[i]=&Shell->Array[0][last_index+Shell->num_of_tuples];
-    last_index+=Shell->num_of_tuples;
+  for(int i =1;i<num_of_columns;i++){
+    Array[i]=&Array[0][last_index+num_of_tuples];
+    last_index+=num_of_tuples;
   }
 }
+
+
 
 static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
 
@@ -126,7 +128,7 @@ static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
   //3. Allocate Space
   Allocate_Shell(Shell);
   //set up column pointers
-  Setup_Column_Pointers(Shell);
+  Setup_Column_Pointers(Shell->Array,Shell->num_of_columns,Shell->num_of_tuples);
   //4.Read Data
   Read_Data(Shell,fp);
   fclose(fp);
@@ -146,7 +148,7 @@ Table_Ptr Make_Table_For_Joins(Table_Ptr Relations, int* relations,int num_of_re
     New_Table->Array[i].num_of_columns=num_of_columns;
     New_Table->Array[i].Array=malloc(num_of_columns* sizeof(Tuple_Ptr));
     New_Table->Array[i].Array[0]=malloc((num_of_columns*num_of_tuples)* sizeof( struct Tuple));
-    Setup_Column_Pointers(&New_Table->Array[i]);
+    Setup_Column_Pointers(New_Table->Array[i].Array,num_of_columns,num_of_tuples);
     for(int j =0;j<num_of_columns;j++){
       for(int k=0;k<num_of_tuples;k++){
         New_Table->Array[i].Array[j][k].data = Relations->Array[Original_Shell_index].Array[j][k].data;

@@ -6,17 +6,7 @@ struct Tuple{
   uint64_t row_id;
 };
 
-void Delete_Filter_Results(Filter_Result_Ptr Results,int num_of_filters) {
-  for(int i=0;i<num_of_filters;i++){
-    free(Results[i].row_id);
-  }
-  free(Results);
-}
 
-void Delete_Filter_Outcome(Filters_Outcome_Ptr Outcome){
-  Delete_Filter_Results(Outcome->Filter_Result,Outcome->num_of_filters);
-  free(Outcome);
-}
 
 static int Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp) {
 
@@ -81,6 +71,7 @@ void Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query) {
       Tuple_Ptr *New = (Tuple_Ptr*)malloc(num_of_columns * sizeof(Tuple_Ptr));
       New[0]= (Tuple_Ptr)malloc((num_of_columns * num_of_tuples)* sizeof(struct Tuple));
 
+
       int tuples = Execute(New, Shell, Filter, fp);
       Tuple_Ptr *temp = Get_Shell_Array(Shell);
 	  Set_Shell_Array(Shell, New);
@@ -109,24 +100,4 @@ void Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query) {
 }
 
 
-int Is_Rel_in_Filter_result_and_not_used(int relation,Filters_Outcome_Ptr Outcome){
-  if (Outcome==NULL)
-    return 0;
-  for(int i =0;i<Outcome->num_of_filters;i++){
-    if(Outcome->Filter_Result[i].relation==relation && Outcome->Filter_Result[i].filter_used==0)
-      return 1;
-  }
-  return 0;
-}
 
-int Get_Num_of_results(Filters_Outcome_Ptr Outcome,int relation ){
-  for(int i =0;i<Outcome->num_of_filters;i++){
-    if(Outcome->Filter_Result[i].relation==relation)
-      return Outcome->Filter_Result[i].num_of_results;
-  }
-}
-
-
-uint64_t* Get_Filter_Results(Filters_Outcome_Ptr Outcome){
-  return Outcome->Filter_Result->row_id;
-}

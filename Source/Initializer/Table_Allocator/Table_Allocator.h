@@ -35,7 +35,7 @@ Table_Ptr Make_Table_For_Joins(Table_Ptr Relations, int* relations,int num_of_re
 uint64_t Get_Data(Tuple_Ptr);
 uint64_t Get_Row_id(Tuple_Ptr);
 Tuple_Ptr Get_Column(Shell_Ptr Shell,int column_id);
-
+void Setup_Column_Pointers(Tuple_Ptr* Array,int num_of_columns,int num_of_tuples);
 void Delete_Table_Allocator(Table_AllocatorPtr);
 void Delete_Table(Table_Ptr);
 
