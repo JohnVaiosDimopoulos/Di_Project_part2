@@ -1,5 +1,7 @@
 #include "Table_Allocator.h"
 #include <stdlib.h>
+#include <string.h>
+
 #include "../../Util/Utilities.h"
 
 struct Table_Allocator{
@@ -130,6 +132,33 @@ static void Fill_Shell(const char* FileName, Shell_Ptr Shell){
   fclose(fp);
 }
 
+Table_Ptr Make_Table_For_Joins(Table_Ptr Relations, int* relations,int num_of_relations){
+
+  Table_Ptr New_Table = (Table_Ptr)malloc(sizeof(struct Table));
+  New_Table->Array=(Shell_Ptr)malloc(num_of_relations* sizeof(struct Shell));
+  New_Table->num_of_shells=num_of_relations;
+
+  for(int i=0;i<num_of_relations;i++){
+    int Original_Shell_index = relations[i];
+    int num_of_tuples=Relations->Array[Original_Shell_index].num_of_tuples;
+    int num_of_columns=Relations->Array[Original_Shell_index].num_of_columns;
+    New_Table->Array[i].num_of_tuples=num_of_tuples;
+    New_Table->Array[i].num_of_columns=num_of_columns;
+    New_Table->Array[i].Array=malloc(num_of_columns* sizeof(Tuple_Ptr));
+    New_Table->Array[i].Array[0]=malloc((num_of_columns*num_of_tuples)* sizeof( struct Tuple));
+    Setup_Column_Pointers(&New_Table->Array[i]);
+    for(int j =0;j<num_of_columns;j++){
+      for(int k=0;k<num_of_tuples;k++){
+        New_Table->Array[i].Array[j][k].data = Relations->Array[Original_Shell_index].Array[j][k].data;
+        New_Table->Array[i].Array[j][k].row_id = Relations->Array[Original_Shell_index].Array[j][k].row_id;
+      }
+
+    }
+  }
+
+  return New_Table;
+
+}
 
 void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
 
@@ -193,6 +222,14 @@ uint64_t Get_Data(Tuple_Ptr Tuple){
 uint64_t Get_Row_id(Tuple_Ptr Tuple){
   return Tuple->row_id;
 }
+
+Tuple_Ptr Get_Column(Shell_Ptr Shell,int column_id){
+  return Shell->Array[column_id];
+}
+
+
+
+
 
 //Table_Ptr Allocate_Table_with_num_of_Shells(int num_of_shells) {
 //  Table_Ptr Table = (Table_Ptr)malloc(sizeof(Table));

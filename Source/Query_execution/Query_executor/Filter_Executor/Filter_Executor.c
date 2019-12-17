@@ -108,5 +108,6 @@ int Get_Num_of_results(Filters_Outcome_Ptr Outcome,int relation ){
 }
 
 
-
-
+uint64_t* Get_Filter_Results(Filters_Outcome_Ptr Outcome){
+  return Outcome->Filter_Result->row_id;
+}

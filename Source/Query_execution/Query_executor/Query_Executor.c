@@ -3,6 +3,8 @@
 #include "../Preparator/Preparator.h"
 #include "./Filter_Executor/Filter_Executor.h"
 
+
+
 void Execute_Query(Query_Ptr Query, Table_Ptr Table){
 
   //1.Parse the query
@@ -11,19 +13,21 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   int *relations = Get_Relations(Parsed_Query);
 
 
-  //execute filters first
   //2.do the preparations
   Execution_Queue_Ptr Queue = Prepare_Execution_Queue(Parsed_Query);
   Print_Queue(Queue);
 
+  Table_Ptr New_Table = Make_Table_For_Joins(Table,relations,num_of_relations);
+
   //3.execute the query based on the preparation
-  Filters_Outcome_Ptr Outcome = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
-  Delete_Filter_Outcome(Outcome);
+//  Filters_Outcome_Ptr Outcome = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
+//  Delete_Filter_Outcome(Outcome);
   //1.input the execution tree + the relations we need to
   //2.get the result as an output
 
   Delete_Queue(Queue);
   Delete_Parsed_Query(Parsed_Query);
+  Delete_Table(New_Table);
 
 
 }
