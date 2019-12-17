@@ -11,7 +11,6 @@ struct Tuple{
 
 static void Execute_Self_Join(Join_Ptr Join,Table_Ptr Relations) {
 
-  //1.get the rel from the table
   int relation = Get_Relation_1(Join);
   int column_1 = Get_Column_1(Join);
   int column_2 = Get_Column_2(Join);
@@ -27,20 +26,23 @@ static void Execute_Self_Join(Join_Ptr Join,Table_Ptr Relations) {
   Results[0] =(Tuple_Ptr)malloc((num_of_columns*num_of_tuples)* sizeof(struct Tuple));
 
   //setup_pointers;
-
+  Setup_Column_Pointers(Results,num_of_columns,num_of_tuples);
 
   for(int i=0;i<num_of_tuples;i++){
-    if(Old_Array[column_1][i].data==Old_Array[column_2][i].data)
+    if(Old_Array[column_1][i].data==Old_Array[column_2][i].data){
       for(int j =0;j<num_of_columns;j++){
         Results[j][counter].data=Old_Array[j][i].data;
         Results[j][counter].row_id=Old_Array[j][i].row_id;
-        counter++;
       }
+      counter++;
+    }
+
+
   }
+  Set_Shell_Array(Relation,Results);
 
-
-
-
+  free(Old_Array[0]);
+  free(Old_Array);
 }
 
 
