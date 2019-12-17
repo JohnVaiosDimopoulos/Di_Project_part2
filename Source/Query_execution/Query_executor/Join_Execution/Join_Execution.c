@@ -1,30 +1,31 @@
-//#include "Join_Execution.h"
-//#include "../Filter_Executor/Filter_Executor.h"
-//#include <stdlib.h>
-//
-//struct Tuple{
-//  uint64_t data;
-//  uint64_t row_id;
-//};
-//
-//typedef struct Tuple* Tuple_ptr;
-//
-//
-//
+#include "Join_Execution.h"
+#include "../Filter_Executor/Filter_Executor.h"
+#include <stdlib.h>
+
+struct Tuple{
+  uint64_t data;
+  uint64_t row_id;
+};
+typedef struct Tuple* Tuple_ptr;
+
+
+
 //static void Execute_Self_Join(Join_Ptr Join,Filters_Outcome_Ptr Filter_Outcome,Intermediate_Result_ptr Intermediate_Result,Table_Ptr Relations,int* relation_map) {
 //
 //
 //
 //}
-//
+
+
 //static int Check_if_relations_already_in_result(Join_Ptr Join,Intermediate_Result_ptr Intermediate_Result){
 //  if(Is_rel_in_intermediate_result(Intermediate_Result,Get_Relation_1(Join)) && Is_rel_in_intermediate_result(Intermediate_Result,Get_Relation_2(Join)))
 //    return 1;
 //  return 0;
 //}
-//
+
+
 //static void Execute_Scan_Join(Join_Ptr Join,Intermediate_Result_ptr old_result){
-///*
+/*
 // * also input the intermediate result as old_result;
 // * Make row_id/value pairs for rel1 based on join column=  t1(rid|v)
 // * Make row_id/value paits for rel2 based on join column=  t2(rid|v)
@@ -37,8 +38,9 @@
 // * }
 //*/
 //}
-//
-//
+
+
+
 //void Execute_Joins(Execution_Queue_Ptr Execution_Queue,Filter_Result_Ptr Filter_Results,Table_Ptr Relations,int* relation_map){
 //
 //  Intermediate_Result_ptr Intermediate_Result = NULL;
