@@ -21,37 +21,43 @@ static int Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp)
   for(int i =0; i < Get_num_of_tuples(Shell); i++){
 
     Tuple_Ptr current = Get_Shell_Array_by_index(Shell, col, i);
-	for(int j =0; j < Get_num_of_columns(Shell); j++) {
-	  uint64_t data_to_check = Get_Data(current);
-      Tuple_Ptr Tuples = Get_Shell_Array_by_index(Shell, j, i);
-	  uint64_t data = Get_Data(Tuples);
-      uint64_t row = Get_Row_id(Tuples);
-      switch(type[0]) {
-        case '<':
-          if(data_to_check < con) {
-            New[0][cnt].data = data;
-            New[0][cnt].row_id = row;
-            cnt++;
-          }
-          break;
-        case '>':
-          if(data_to_check > con) {
-            New[0][cnt].data = data;
-            New[0][cnt].row_id = row;
-			cnt++;
-          }
-          break;
-        case '=':
-          if(data_to_check ==  con) {
-            New[0][cnt].data = data;
-            New[0][cnt].row_id = row;
-			cnt++;
-          }
-          break;
-      }
-	}
+	uint64_t data_to_check = Get_Data(current);
+	//printf("%llu\n", data_to_check);
+
+    Tuple_Ptr Tuples = Get_Shell_Array_by_index(Shell, 0, i);
+	uint64_t data = Get_Data(Tuples);
+    uint64_t row = Get_Row_id(Tuples);
+    
+    switch(type[0]) {
+      case '<':
+        if(data_to_check < con) {
+	      for(int j =0; j < Get_num_of_columns(Shell); j++) {
+            New[j][cnt].data = data;
+            New[j][cnt].row_id = row;
+		  }
+          cnt++;
+        }
+        break;
+      case '>':
+        if(data_to_check > con) {
+	      for(int j =0; j < Get_num_of_columns(Shell); j++) {
+            New[j][cnt].data = data;
+            New[j][cnt].row_id = row;
+		  }
+	  	cnt++;
+        }
+        break;
+      case '=':
+        if(data_to_check ==  con) {
+	      for(int j =0; j < Get_num_of_columns(Shell); j++) {
+            New[j][cnt].data = data;
+            New[j][cnt].row_id = row;
+		  }
+	  	cnt++;
+        }
+        break;
+    }
   }
-  cnt /=  Get_num_of_columns(Shell);
   return cnt;
 }
 
@@ -70,9 +76,10 @@ void Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query) {
       //allocate array
       Tuple_Ptr *New = (Tuple_Ptr*)malloc(num_of_columns * sizeof(Tuple_Ptr));
       New[0]= (Tuple_Ptr)malloc((num_of_columns * num_of_tuples)* sizeof(struct Tuple));
-
+      Setup_Column_Pointers(New, num_of_columns, num_of_tuples);
 
       int tuples = Execute(New, Shell, Filter, fp);
+
       Tuple_Ptr *temp = Get_Shell_Array(Shell);
 	  Set_Shell_Array(Shell, New);
 	  Set_Shell_num_of_tuples(Shell, tuples);
@@ -82,10 +89,14 @@ void Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query) {
 
 	  //just for checking
 //	  int j = 0;
-//      fprintf(fp, "REL %d\n", rel);
-//      for(int i =0; i< tuples * num_of_columns;i++){
-//        fprintf(fp,"(%llu)", New[0][i].row_id);
-//        fprintf(fp, "%llu|", New[0][i].data);
+      fprintf(fp, "REL %d\n", rel);
+      for(int i =0; i< tuples; i++){
+        for(int j =0; j < num_of_columns; j++){
+          fprintf(fp,"(%llu)", New[j][i].row_id);
+          fprintf(fp, "%llu|", New[j][i].data);
+		}
+        fprintf(fp, "\n");
+	  }
 //        j++;
 //        if(j == num_of_columns) {
 //          fprintf(fp, "\n");
