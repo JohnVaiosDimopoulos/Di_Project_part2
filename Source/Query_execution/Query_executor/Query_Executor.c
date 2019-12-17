@@ -11,12 +11,12 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   int *relations = Get_Relations(Parsed_Query);
 
 
-  //execute filters first
   //2.do the preparations
   Execution_Queue_Ptr Queue = Prepare_Execution_Queue(Parsed_Query);
   Print_Queue(Queue);
 
   //3.execute the query based on the preparation
+  //execute filters first
   Filters_Outcome_Ptr Outcome = Execute_Filters(Table, Parsed_Query, relations, num_of_relations);
   Delete_Filter_Outcome(Outcome);
   //1.input the execution tree + the relations we need to
