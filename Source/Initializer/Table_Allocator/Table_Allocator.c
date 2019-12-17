@@ -196,6 +196,14 @@ void Delete_Table(Table_Ptr Table) {
   free(Table);
 }
 
+void Set_Shell_Array(Shell_Ptr Shell, Tuple_Ptr *Array){
+  Shell->Array = Array;
+}
+
+void Set_Shell_num_of_tuples(Shell_Ptr Shell, int tuples){
+  Shell->num_of_tuples = tuples;
+}
+
 uint64_t Get_num_of_tuples(Shell_Ptr Shell) {
   return Shell->num_of_tuples;
 }
@@ -207,8 +215,8 @@ Shell_Ptr Get_Shell_by_index(Shell_Ptr Shell,int index){
   return &Shell[index];
 }
 
-Tuple_Ptr Get_Shell_Array(Shell_Ptr Shell){
-  return *Shell->Array;
+Tuple_Ptr* Get_Shell_Array(Shell_Ptr Shell){
+  return Shell->Array;
 }
 
 Tuple_Ptr Get_Shell_Array_by_index(Shell_Ptr Shell, int i, int j){

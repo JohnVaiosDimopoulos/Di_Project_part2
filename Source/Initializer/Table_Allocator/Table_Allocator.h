@@ -18,13 +18,16 @@ void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator);
 
 void Print_Table(Table_Ptr);
 void Allocate_Shell(Shell_Ptr);
+
+void Set_Shell_Array(Shell_Ptr, Tuple_Ptr *);
+void Set_Shell_num_of_tuples(Shell_Ptr, int);
+
 Shell_Ptr Get_Table_Array(Table_Ptr);
 Shell_Ptr Get_Shell_by_index(Shell_Ptr,int);
 
-
 uint64_t Get_num_of_tuples(Shell_Ptr);
 uint64_t Get_num_of_columns(Shell_Ptr);
-Tuple_Ptr Get_Shell_Array(Shell_Ptr);
+Tuple_Ptr* Get_Shell_Array(Shell_Ptr);
 Tuple_Ptr Get_Shell_Array_by_index(Shell_Ptr, int, int);
 Table_Ptr Make_Table_For_Joins(Table_Ptr Relations, int* relations,int num_of_relations);
 //Tuple_Ptr Get_Shell_Array_by_index(Tuple_Ptr, int);

@@ -25,7 +25,8 @@ typedef struct Filters_Outcome* Filters_Outcome_Ptr;
 int Is_Rel_in_Filter_result_and_not_used(int relation,Filters_Outcome_Ptr Outcome);
 int Get_Num_of_results(Filters_Outcome_Ptr,int);
 
-Filters_Outcome_Ptr Execute_Filters(Table_Ptr, Parsed_Query_Ptr, int *, int);
+//Filters_Outcome_Ptr Execute_Filters(Table_Ptr, Parsed_Query_Ptr, int *, int);
+void Execute_Filters(Table_Ptr, Parsed_Query_Ptr);
 void Delete_Filter_Results(Filter_Result_Ptr Results,int num_of_filters);
 void Delete_Filter_Outcome(Filters_Outcome_Ptr Outcome);
 
