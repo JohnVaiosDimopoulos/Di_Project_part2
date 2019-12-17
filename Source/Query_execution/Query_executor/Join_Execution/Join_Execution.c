@@ -145,7 +145,7 @@ static void Execute_Scan_Join(Join_Ptr Join,Intermediate_Result_Ptr old_result,T
   free(result_temp);
   struct Result** temp = old_result->row_ids;
   for(int i =0;i<old_result->num_of_results;i++)
-    free(temp[i]);
+    free(temp[0]);
   free(temp);
 
   old_result->row_ids=result_new;
