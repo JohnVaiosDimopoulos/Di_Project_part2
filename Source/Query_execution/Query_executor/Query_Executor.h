@@ -6,4 +6,5 @@
 
 void Execute_Query(Query_Ptr, Table_Ptr);
 
+
 #endif //MULTI_JOIN_QUERY_EXECUTOR_H
