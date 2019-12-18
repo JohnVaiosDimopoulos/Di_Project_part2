@@ -12,14 +12,22 @@ struct Tuple{
 };
 
 void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Query, Table_Ptr Table) {
+
   int num_of_proj = Get_Num_of_Projections(Parsed_Query);
   Projection_Ptr Proj = Get_Projections(Parsed_Query);
   for(int i = 0; i < num_of_proj; i++) {
+
     Projection_Ptr current_proj = Get_Proj_by_index(Proj, i);
 	int rel = *Get_Projection_Relation(current_proj);
     int col = *Get_Projection_Column(current_proj);
+
     printf("\n\nproj: %d.%d, ", rel, col);
+
 	if(Res) {
+	  if(Res->relations_in_result[rel]==0){
+	    // get the sum from tha array
+	  }
+
 	  int num_of_res = Res->num_of_results;
       printf("num of res = %d\n", num_of_res);
       struct Result** row_ids = Res->row_ids;
@@ -41,7 +49,7 @@ void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Qu
 //	    Tuple_Ptr current_tuple = Get_Shell_Array_by_index(Shell, col, result_row_ids[j]);
 //		sum += current_tuple->element;
 ////        printf("%llu %llu -> %llu\n", current_tuple->row_id, current_tuple->element, sum);
-//	  }
+//      }
 //      printf("%llu\n", sum);
 
     } else printf("NULL\n");

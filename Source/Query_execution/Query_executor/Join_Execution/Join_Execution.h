@@ -9,10 +9,6 @@ struct Result{
   uint64_t row_id;
 };
 
-struct Rel_Tuple{
-  struct Result* row_ids;
-  uint64_t value;
-};
 
 struct Intermediate_Result{
   int relations_in_result[4];

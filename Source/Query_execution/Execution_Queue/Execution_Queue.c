@@ -75,6 +75,8 @@ Join_Ptr Pop_Next_join(Execution_Queue_Ptr Execution_Queue){
     return NULL;
   Execution_Queue_Node_Ptr temp = Execution_Queue->head;
   Execution_Queue->head = temp->next;
+  if(Execution_Queue->head==NULL)
+    Execution_Queue->tail=NULL;
   Join_Ptr Join = temp->Join;
   Delete_Node(temp);
   return Join;

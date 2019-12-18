@@ -37,7 +37,7 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   Delete_Queue(Queue);
   Delete_Parsed_Query(Parsed_Query);
   Delete_Table(New_Table);
-  Delete_intermediate_Result(Res);
+ // Delete_intermediate_Result(Res);
 
 
 }
