@@ -24,7 +24,10 @@ void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Qu
       printf("num of res = %d\n", num_of_res);
       struct Result** row_ids = Res->row_ids;
       printf("rel in intermediate %d\n", row_ids[0][rel].relation);
-      printf("exists -> %d\n", Res->relations_in_result[rel]);
+	  if(Res->relations_in_result[rel])
+        printf("exists -> %d\n", Res->relations_in_result[rel]);
+	  else
+        printf("doesnt exist\n");
 	  //copy result_row_ids
 //	  Shell_Ptr Shell = Get_Table_Array(Table);
 //	  Shell_Ptr current_shell = Get_Shell_by_index(Shell, rel);
