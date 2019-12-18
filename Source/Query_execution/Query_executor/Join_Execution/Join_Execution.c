@@ -74,17 +74,17 @@ static RelationPtr Make_Relation_From_Table(Table_Ptr Relations,int rel,int col)
   return Final_Relation;
 }
 
-static RelationPtr Make_Relation_From_Intermediate_Array(Table_Ptr Relations,Intermediate_Result_Ptr Intermediate_Result,int rel,int col){
+static RelationPtr Make_Relation_From_Intermediate_Array(Table_Ptr Relations,Intermediate_Result_Ptr Intermediate_Result,int rel,int col,int* relations_map){
 
   int num_of_tuples;
 
-  Tuple_Ptr* Array = Get_Array_of_data_from_table(Relations,rel,&num_of_tuples);
+  Tuple_Ptr* Array = Get_Array_of_data_from_table(Relations,relations_map[rel],&num_of_tuples);
   Tuple_Ptr Rel = malloc(Intermediate_Result->num_of_results* sizeof(struct Tuple));
 
   for(int i =0;i<Intermediate_Result->num_of_results;i++){
     Rel[i].row_id=i;
     uint64_t original_row_id = find_row_id(Intermediate_Result,rel,i);
-    int el = find_value_from_row_id(Array,col,original_row_id,num_of_tuples);
+    int el = Array[col][original_row_id].element;
     Rel[i].element =el;
   }
 
@@ -249,7 +249,7 @@ static void Setup_Intermediate_Result(Intermediate_Result_Ptr Intermediate_Resul
   Intermediate_Result->num_of_relations++;
 }
 
-static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermediate_Result, Table_Ptr Relations ){
+static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermediate_Result, Table_Ptr Relations,Table_Ptr Original_Relations,int* relations_map){
 
   int rel_1 = Get_Relation_1(Join);
   int col_1 = Get_Column_1(Join);
@@ -262,7 +262,7 @@ static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermedia
   if(Intermediate_Result->relations_in_result[Get_Relation_1(Join)]==1){
 
     Final_Relation_1 = Make_Relation_From_Table(Relations,rel_2,col_2);
-    Final_Relation_2 = Make_Relation_From_Intermediate_Array(Relations,Intermediate_Result,rel_1,col_1);
+    Final_Relation_2 = Make_Relation_From_Intermediate_Array(Original_Relations,Intermediate_Result,rel_1,col_1,relations_map);
 //    Print_Relation(Final_Relation_2);
 
     if(Final_Relation_1==NULL || Final_Relation_2==NULL){
@@ -285,7 +285,7 @@ static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermedia
 
   else if(Intermediate_Result->relations_in_result[Get_Relation_2(Join)]==1){
     Final_Relation_1 = Make_Relation_From_Table(Relations,rel_1,col_1);
-    Final_Relation_2 = Make_Relation_From_Intermediate_Array(Relations,Intermediate_Result,rel_2,col_2);
+    Final_Relation_2 = Make_Relation_From_Intermediate_Array(Original_Relations,Intermediate_Result,rel_2,col_2,relations_map);
 
     if(Final_Relation_1->num_of_tuples==0 || Final_Relation_2->num_of_tuples==0)
 
@@ -372,7 +372,7 @@ Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table
       Execute_Scan_Join(Current_Join, Intermediate_Result, Original_Relations,relation_map);
 
     else{
-      Execute_Normal_Join(Current_Join, Intermediate_Result, Filtered_Relations);
+      Execute_Normal_Join(Current_Join, Intermediate_Result, Filtered_Relations,Original_Relations,relation_map);
       if(Intermediate_Result->row_ids==NULL)
         return  NULL;
     }
