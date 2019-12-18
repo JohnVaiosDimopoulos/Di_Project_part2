@@ -25,7 +25,7 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   Table_Ptr New_Table = Make_Table_For_Joins(Table,relations,num_of_relations);
 
   //execute filters first
- // Execute_Filters(New_Table, Parsed_Query);
+  Execute_Filters(New_Table, Parsed_Query);
 
   //execute joins
   Intermediate_Result_Ptr Res = Execute_Joins(Queue,New_Table,Table,relations);
