@@ -6,10 +6,10 @@
 #include "../Join_Execution/Join_Execution.h"
 #include <stdlib.h>
 
-//struct Tuple{
-//  uint64_t element;
-//  uint64_t row_id;
-//};
+struct Tuple{
+  uint64_t element;
+  uint64_t row_id;
+};
 
 void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Query, Table_Ptr Table) {
 
@@ -44,15 +44,17 @@ void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Qu
 	  if(Res->relations_in_result[rel]) {
         printf("exists -> %d\n", Res->relations_in_result[rel]);
 	    
+        int index;
+        for(int k = 0; k < Res->num_of_relations; k++) {
+          if(Res->row_ids[0][k].relation == rel) {
+		    index = Res->row_ids[0][k].relation;
+		    break;
+		  }
+		}
 	    //copy result_row_ids
 		uint64_t result_row_ids[num_of_res];
         for(int j = 0; j < num_of_res; j++){
-          for(int k=0;k<Res->num_of_relations;k++){
-            if(row_ids[j][k].relation==rel){
-              result_row_ids[j] = row_ids[j][k].row_id;
-
-            }
-          }
+          result_row_ids[j] = row_ids[j][index].row_id;
 //          printf("row_id (intermdt) %d ", result_row_ids[j]);
 	      Tuple_Ptr current_tuple = Get_Shell_Array_by_index(current_shell, col, result_row_ids[j]);
 	      sum += current_tuple->element;
