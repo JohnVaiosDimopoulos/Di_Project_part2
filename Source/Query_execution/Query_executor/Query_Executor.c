@@ -29,7 +29,7 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
 
   //execute joins
   Intermediate_Result_Ptr Res = Execute_Joins(Queue,New_Table);
-  //Print_Intermediate(Res);
+  Print_Intermediate(Res);
 
   //do projections
   Execute_Projections(Res, Parsed_Query, Table);
