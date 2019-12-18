@@ -3,6 +3,7 @@
 
 #include "../../Execution_Queue/Execution_Queue.h"
 #include "../Filter_Executor/Filter_Executor.h"
+#include "../../../Basis_Structs/Relation.h"
 
 struct Result{
   int relation;
@@ -15,6 +16,8 @@ struct Intermediate_Result{
   int num_of_results;
   int num_of_relations;
   struct Result** row_ids;
+  RelationPtr old_Relation1;
+  RelationPtr old_Relation2;
 };
 
 typedef struct Intermediate_Result* Intermediate_Result_Ptr;

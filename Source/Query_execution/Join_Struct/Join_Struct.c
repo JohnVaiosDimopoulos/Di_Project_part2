@@ -29,6 +29,8 @@ int Is_Self_Join(Join_Ptr Join){
 }
 
 int Is_Same_Column_used(Join_Ptr Join_1,Join_Ptr Join_2){
+  if(Join_1==NULL|| Join_2==NULL)
+    return 0;
   if( (Join_1->rel1==Join_2->rel1 && Join_1->col1==Join_2->col1)||
       (Join_1->rel1==Join_2->rel2 && Join_1->col1==Join_2->col2 )||
       (Join_1->rel2==Join_2->rel1 && Join_1->col2==Join_2->col1)||

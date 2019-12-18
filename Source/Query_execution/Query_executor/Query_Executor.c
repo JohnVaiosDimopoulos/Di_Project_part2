@@ -6,10 +6,10 @@
 //#include "./Join_Execution/Join_Execution.h"
 
 
-struct Tuple{
-  uint64_t element;
-  uint64_t row_id;
-};
+//struct Tuple{
+//  uint64_t element;
+//  uint64_t row_id;
+//};
 
 void Execute_Query(Query_Ptr Query, Table_Ptr Table){
 
