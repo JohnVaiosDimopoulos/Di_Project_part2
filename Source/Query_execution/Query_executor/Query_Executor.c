@@ -30,7 +30,11 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   //execute joins
   Intermediate_Result_Ptr Res = Execute_Joins(Queue,New_Table);
 
-  //do predicates
+  //do projections
+  int num_of_proj = Get_Num_of_Projections(Parsed_Query);
+  Projection_Ptr Proj = Get_Projections(Parsed_Query)
+  for(int i = 0; i < num_of_proj; i++) {
+    printf("\n\nproj: %d\n", Proj);
 
   Delete_Queue(Queue);
   Delete_Parsed_Query(Parsed_Query);

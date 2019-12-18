@@ -17,6 +17,7 @@ Join_Ptr Get_Joins(Parsed_Query_Ptr Parsed_Query);
 Filter_Ptr Get_Filters(Parsed_Query_Ptr Parsed_Query);
 Projection_Ptr Get_Projections(Parsed_Query_Ptr Parsed_Query);
 int Get_Num_of_Relations(Parsed_Query_Ptr);
+int Get_Num_of_Projections(Parsed_Query_Ptr);
 int* Get_Relations(Parsed_Query_Ptr);
 int Get_Num_of_Filters(Parsed_Query_Ptr);
 int Get_Num_of_Joins(Parsed_Query_Ptr);

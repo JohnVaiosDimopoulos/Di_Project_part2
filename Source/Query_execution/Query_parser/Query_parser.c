@@ -122,6 +122,11 @@ int Get_Num_of_Relations(Parsed_Query_Ptr Parsed_Query){
   return Parsed_Query->num_of_relations;
 }
 
+int Get_Num_of_Projections(Parsed_Query_Ptr Parsed_Query){
+  return Parsed_Query->num_of_projections;
+}
+
+//Parsed Query Mutators//
 void Set_Relations(Parsed_Query_Ptr Parsed_Query ,int* rel){
   Parsed_Query->relations=rel;
 }

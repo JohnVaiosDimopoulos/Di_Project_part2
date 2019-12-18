@@ -350,7 +350,7 @@ Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table
       Execute_Normal_Join(Current_Join,Intermediate_Result,Relations);
 //      Print_Intermediate(Intermediate_Result);
       if(Intermediate_Result->row_ids==NULL)
-        return;
+        return NULL;
     }
 
   }
