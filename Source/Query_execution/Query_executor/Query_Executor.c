@@ -28,16 +28,17 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   Execute_Filters(New_Table, Parsed_Query);
 
   //execute joins
-  Intermediate_Result_Ptr Res = Execute_Joins(Queue,New_Table);
-  Print_Intermediate(Res);
+  Intermediate_Result_Ptr Res = Execute_Joins(Queue,New_Table,Table,relations);
+//  Print_Intermediate(Res);
 
   //do projections
-  Execute_Projections(Res, Parsed_Query, Table);
+//  Execute_Projections(Res, Parsed_Query, Table);
 
   Delete_Queue(Queue);
   Delete_Parsed_Query(Parsed_Query);
   Delete_Table(New_Table);
-  Delete_intermediate_Result(Res);
+  if(Res!=NULL)
+    Delete_intermediate_Result(Res);
 
 
 }

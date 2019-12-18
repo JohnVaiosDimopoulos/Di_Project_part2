@@ -151,7 +151,11 @@ static  Tuple_Ptr  Make_Relation_For_Scan(int relation,int column,Intermediate_R
   return Rel;
 }
 
-static void Execute_Scan_Join(Join_Ptr Join, Intermediate_Result_Ptr Intermediate_Result, Table_Ptr Relations){
+static void Execute_Scan_Join(Join_Ptr Join,
+                              Intermediate_Result_Ptr Intermediate_Result,
+                              Table_Ptr Relations,
+                              Table_Ptr Original_Relations,
+                              int *relations_map) {
 
   int rel_1 = Get_Relation_1(Join);
   int col_1 = Get_Column_1(Join);
@@ -352,7 +356,7 @@ static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermedia
 
 }
 
-Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table_Ptr Relations){
+Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table_Ptr Filtered_Relations,Table_Ptr Original_Relations,int* relation_map){
 
   Intermediate_Result_Ptr Intermediate_Result = Create_Intermediate_Result();
   Join_Ptr Last_Join = NULL;
@@ -363,13 +367,13 @@ Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table
       Current_Join=Pop_Next_join(Execution_Queue)){
 
     if(Is_Self_Join(Current_Join))
-      Execute_Self_Join(Current_Join,Relations);
+      Execute_Self_Join(Current_Join, Filtered_Relations);
 
     else if(Check_if_relations_already_in_result(Current_Join,Intermediate_Result))
-        Execute_Scan_Join(Current_Join,Intermediate_Result,Relations);
+      Execute_Scan_Join(Current_Join, Intermediate_Result, Filtered_Relations, NULL, NULL);
 
     else{
-      Execute_Normal_Join(Current_Join,Intermediate_Result,Relations);
+      Execute_Normal_Join(Current_Join, Intermediate_Result, Filtered_Relations);
       if(Intermediate_Result->row_ids==NULL)
         return  NULL;
     }
