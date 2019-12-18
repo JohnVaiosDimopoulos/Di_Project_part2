@@ -23,15 +23,14 @@ static int Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp)
     Tuple_Ptr current = Get_Shell_Array_by_index(Shell, col, i);
 	uint64_t data_to_check = Get_Data(current);
 	//printf("%llu\n", data_to_check);
-
-    Tuple_Ptr Tuples = Get_Shell_Array_by_index(Shell, 0, i);
-	uint64_t data = Get_Data(Tuples);
-    uint64_t row = Get_Row_id(Tuples);
     
     switch(type[0]) {
       case '<':
         if(data_to_check < con) {
 	      for(int j =0; j < Get_num_of_columns(Shell); j++) {
+            Tuple_Ptr Tuples = Get_Shell_Array_by_index(Shell, j, i);
+	        uint64_t data = Get_Data(Tuples);
+            uint64_t row = Get_Row_id(Tuples);
             New[j][cnt].element = data;
             New[j][cnt].row_id = row;
 		  }
@@ -41,19 +40,25 @@ static int Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp)
       case '>':
         if(data_to_check > con) {
 	      for(int j =0; j < Get_num_of_columns(Shell); j++) {
+            Tuple_Ptr Tuples = Get_Shell_Array_by_index(Shell, j, i);
+	        uint64_t data = Get_Data(Tuples);
+            uint64_t row = Get_Row_id(Tuples);
             New[j][cnt].element = data;
             New[j][cnt].row_id = row;
 		  }
-	  	cnt++;
+          cnt++;
         }
         break;
       case '=':
         if(data_to_check ==  con) {
 	      for(int j =0; j < Get_num_of_columns(Shell); j++) {
+            Tuple_Ptr Tuples = Get_Shell_Array_by_index(Shell, j, i);
+	        uint64_t data = Get_Data(Tuples);
+            uint64_t row = Get_Row_id(Tuples);
             New[j][cnt].element = data;
             New[j][cnt].row_id = row;
 		  }
-	  	cnt++;
+          cnt++;
         }
         break;
     }
