@@ -29,14 +29,13 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
 
   //execute joins
   Intermediate_Result_Ptr Res = Execute_Joins(Queue,New_Table);
-  Print_Intermediate(Res);
-
   //do predicates
 
   Delete_Queue(Queue);
   Delete_Parsed_Query(Parsed_Query);
   Delete_Table(New_Table);
-  Delete_intermediate_Result(Res);
+  if(Res!=NULL)
+    Delete_intermediate_Result(Res);
 
 
 }
