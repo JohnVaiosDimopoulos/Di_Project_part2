@@ -24,22 +24,22 @@ void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Qu
       printf("num of res = %d\n", num_of_res);
       struct Result** row_ids = Res->row_ids;
       printf("rel in intermediate %d\n", row_ids[0][rel].relation);
-
+      printf("exists -> %d\n", Res->relations_in_result[rel]);
 	  //copy result_row_ids
-	  Shell_Ptr Shell = Get_Table_Array(Table);
-	  Shell_Ptr current_shell = Get_Shell_by_index(Shell, rel);
-	  Tuple_Ptr *Tuple = Get_Shell_Array(Shell);
-
-	  uint64_t sum = 0;
-	  int result_row_ids[num_of_res];
-      for(int j = 0; j < num_of_res; j++){
-        result_row_ids[j] = row_ids[j][rel].row_id;
-//        printf("%d\n", result_row_ids[j]);
-	    Tuple_Ptr current_tuple = Get_Shell_Array_by_index(Shell, col, result_row_ids[j]);
-		sum += current_tuple->element;
-//        printf("%llu %llu -> %llu\n", current_tuple->row_id, current_tuple->element, sum);
-	  }
-      printf("%llu\n", sum);
+//	  Shell_Ptr Shell = Get_Table_Array(Table);
+//	  Shell_Ptr current_shell = Get_Shell_by_index(Shell, rel);
+//	  Tuple_Ptr *Tuple = Get_Shell_Array(Shell);
+//
+//	  uint64_t sum = 0;
+//	  int result_row_ids[num_of_res];
+//      for(int j = 0; j < num_of_res; j++){
+//        result_row_ids[j] = row_ids[j][rel].row_id;
+////        printf("%d\n", result_row_ids[j]);
+//	    Tuple_Ptr current_tuple = Get_Shell_Array_by_index(Shell, col, result_row_ids[j]);
+//		sum += current_tuple->element;
+////        printf("%llu %llu -> %llu\n", current_tuple->row_id, current_tuple->element, sum);
+//	  }
+//      printf("%llu\n", sum);
 
     } else printf("NULL\n");
   }

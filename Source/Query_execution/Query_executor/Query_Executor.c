@@ -32,7 +32,7 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   //Print_Intermediate(Res);
 
   //do projections
-  Execute_Projections(Res, Parsed_Query, Table);
+  //Execute_Projections(Res, Parsed_Query, Table);
 
   Delete_Queue(Queue);
   Delete_Parsed_Query(Parsed_Query);
