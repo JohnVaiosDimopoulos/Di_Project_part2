@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "../Initializer/Relation_Creator/Relation_Creator.h"
+#include "../Relation_Creator/Relation_Creator.h"
 #include "../Results_List/Results_List.h"
 
-void Join(RelationPtr, RelationPtr);
+struct Result_List * Execute_Join(RelationPtr Relation_A, RelationPtr Relation_B);
 
 #endif //SORT_JOIN_RELATION_CREATOR_H

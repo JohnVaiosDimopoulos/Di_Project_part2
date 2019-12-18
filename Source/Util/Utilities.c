@@ -82,3 +82,17 @@ void Tokenize_to_rel_and_col(int *rel, int *col, char *str) {
 
   free(temp);
 }
+
+Tuple_Ptr Allocate_Array(int Array_elements){
+
+  if(Array_elements==0)
+    return NULL;
+
+  Tuple_Ptr New_Array = (Tuple_Ptr) malloc(Array_elements* sizeof(struct Tuple));
+
+  if(New_Array==NULL){
+    printf("Memory Allocation Failed\n");
+    return NULL;
+  }
+  return New_Array;
+}

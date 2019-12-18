@@ -73,11 +73,11 @@ int Get_Column_1(Join_Ptr Join){
 }
 
 int Get_Relation_2(Join_Ptr Join){
-  return Join->col2;
+  return Join->rel2;
 }
 
 int Get_Column_2(Join_Ptr Join){
-  return Join->rel2;
+  return Join->col2;
 }
 
 void Set_Relation_1(int rel1,Join_Ptr Join){

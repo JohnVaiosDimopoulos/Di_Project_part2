@@ -15,11 +15,6 @@ struct Table {
   int num_of_shells;
 };
 
-struct Tuple{
-  uint64_t element;
-  uint64_t row_id;
-};
-
 struct Shell {
   uint64_t num_of_tuples;
   uint64_t num_of_columns;
@@ -66,15 +61,15 @@ static char* Get_File_Name(char* line_buffer, int size) {
   return file_Name;
 }
 
-void Print_Relation(Tuple_Ptr* Relation,int num_of_tuples,int num_of_columns){
-  for(int i =0;i<num_of_tuples;i++){
-    for(int j=0;j<num_of_columns;j++){
-      printf("(%llu)",Relation[j][i].row_id);
-      printf("%llu",Relation[j][i].element);
-    }
-    printf("\n");
-  }
-}
+//void Print_Relation(Tuple_Ptr* Relation,int num_of_tuples,int num_of_columns){
+//  for(int i =0;i<num_of_tuples;i++){
+//    for(int j=0;j<num_of_columns;j++){
+//      printf("(%llu)",Relation[j][i].row_id);
+//      printf("%llu",Relation[j][i].element);
+//    }
+//    printf("\n");
+//  }
+//}
 
 
 static void Print_Shell(Shell_Ptr Shell, FILE *fp) {

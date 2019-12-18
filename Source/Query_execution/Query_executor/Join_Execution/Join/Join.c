@@ -1,5 +1,5 @@
 #include "Join.h"
-#include "../Initializer/Relation_Creator/Relation_Creator.h"
+#include "../Relation_Creator/Relation_Creator.h"
 #include "../../../../Util/Utilities.h"
 
 static void Print_Result(List_Ptr List) {
@@ -52,12 +52,11 @@ static void Join_Relations(RelationPtr Relation_A, RelationPtr Relation_B, List_
   }
 }
 
-void Join(RelationPtr Relation_A, RelationPtr Relation_B){
+List_Ptr Execute_Join(RelationPtr Relation_A, RelationPtr Relation_B){
   printf("JOIN\n\n");
   List_Ptr Result_List = Create_and_Initialize_List();
   Join_Relations(Relation_A, Relation_B, Result_List);
   printf("JOIN ENDED\n\n");
-  Print_Result(Result_List);
-  Delete_List(Result_List);
+  return Result_List;
 }
 

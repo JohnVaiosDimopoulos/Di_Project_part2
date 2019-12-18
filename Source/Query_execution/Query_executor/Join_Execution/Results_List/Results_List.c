@@ -1,16 +1,12 @@
 #include "Results_List.h"
 #include <stdlib.h>
 
-typedef struct List_node* Node_Ptr;
 
-struct List_node{
-  uint64_t Array[LIST_SIZE][2];
-  int counter;
-  Node_Ptr next;
-};
+
 
 struct Result_List{
   long num_of_nodes;
+  long num_of_results;
   Node_Ptr start;
   Node_Ptr last;
 };
@@ -57,11 +53,13 @@ List_Ptr Create_and_Initialize_List() {
   List->start = New_Node();
   List->last = List->start;
   List->num_of_nodes=0;
+  List->num_of_results=0;
   return List;
 }
 
 void Insert_Record(List_Ptr List, uint64_t id_1, uint64_t id_2) {
   Node_Ptr Pnode = List->last;
+  List->num_of_results++;
 
   if(Pnode->counter == LIST_SIZE) {
     Pnode->next = New_Node();
@@ -85,4 +83,13 @@ void Delete_List(List_Ptr List){
     Pnode = temp;
   }
   free(List);
+}
+
+int Get_num_of_results(List_Ptr List){
+  return List->num_of_results;
+}
+
+
+Node_Ptr Get_head(List_Ptr List){
+  return List->start;
 }

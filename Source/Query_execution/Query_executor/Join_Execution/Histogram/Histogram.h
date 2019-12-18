@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "../Initializer/Relation_Creator/Relation_Creator.h"
+#include "../Relation_Creator/Relation_Creator.h"
 #define HISTOGRAM_SIZE 256
 
 

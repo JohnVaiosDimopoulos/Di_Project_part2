@@ -20,10 +20,10 @@ void Start_Work(Table_Ptr Relations,Argument_Data_Ptr Arg_Data){
       free(Current_Query);
 	  //this break and the next one should not be here
 	  //just for checking
-//	  break;
+	  break;
     }
     Delete_Batch(Current_Batch);
-//	break;
+	break;
   }
 
   free(path);

@@ -94,14 +94,14 @@ void Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query) {
 
 	  //just for checking
 //	  int j = 0;
-      fprintf(fp, "REL %d\n", rel);
-      for(int i =0; i< tuples; i++){
-        for(int j =0; j < num_of_columns; j++){
-          fprintf(fp,"(%llu)", New[j][i].row_id);
-          fprintf(fp, "%llu|", New[j][i].element);
-		}
-        fprintf(fp, "\n");
-	  }
+//      fprintf(fp, "REL %d\n", rel);
+//      for(int i =0; i< tuples; i++){
+//        for(int j =0; j < num_of_columns; j++){
+//          fprintf(fp,"(%llu)", New[j][i].row_id);
+//          fprintf(fp, "%llu|", New[j][i].element);
+//		}
+//        fprintf(fp, "\n");
+//	  }
 //        j++;
 //        if(j == num_of_columns) {
 //          fprintf(fp, "\n");

@@ -1,48 +1,88 @@
 #include "Join_Execution.h"
 #include "../Filter_Executor/Filter_Executor.h"
+#include "../../../Basis_Structs/Relation.h"
+#include "Relation_Creator/Relation_Creator.h"
+#include "Relation_Sorting/Relation_Sorting.h"
+#include "Join/Join.h"
 #include <stdlib.h>
 
-struct Tuple{
-  uint64_t element;
-  uint64_t row_id;
-};
 
-struct Result{
-  int relation;
-  uint64_t row_id;
-};
 
-struct Rel_Tuple{
-  struct Result* row_ids;
-  uint64_t value;
-};
 
-struct Intermediate_Result{
-  int relations_in_result[4];
-  int num_of_results;
-  int num_of_relations;
-  struct Result** row_ids;
-};
-
-typedef struct {
-  Tuple_Ptr tuples;
-  uint64_t num_of_tuples;
-} Relation;
-
-typedef Relation* RelationPtr;
-
-typedef struct Intermediate_Result* Intermediate_Result_Ptr;
 
 Intermediate_Result_Ptr Create_Intermediate_Result(){
-  Intermediate_Result_Ptr Intermediate_Result = (Intermediate_Result_Ptr)malloc(sizeof(Intermediate_Result));
+  Intermediate_Result_Ptr Intermediate_Result = (Intermediate_Result_Ptr)malloc(sizeof(struct Intermediate_Result));
   Intermediate_Result->num_of_results=0;
-  for(int i =0;i<3;i++)
+  for(int i =0;i<4;i++)
     Intermediate_Result->relations_in_result[i]=0;
+  Intermediate_Result->row_ids=NULL;
   return Intermediate_Result;
 }
 
+static void Print_Intermediate(Intermediate_Result_Ptr Intermediate_Result){
+  for(int i =0;i<Intermediate_Result->num_of_results;i++){
+    for(int j =0;j<Intermediate_Result->num_of_relations;j++){
+      printf("rel:%d,rowId:%llu|",Intermediate_Result->row_ids[i][j].relation,Intermediate_Result->row_ids[i][j].row_id);
+    }
+    printf("\n");
+  }
+}
 
+static Tuple_Ptr* Get_Array_of_data_from_table(Table_Ptr   Relations ,int relation_id,int* num_of_tuples){
+  Shell_Ptr Shell_Array = Get_Table_Array(Relations);
+  Shell_Ptr Current_Shell = Get_Shell_by_index(Shell_Array,relation_id);
+  Tuple_Ptr* Array = Get_Shell_Array(Current_Shell);
+  *num_of_tuples = Get_num_of_tuples(Current_Shell);
+  return Array;
+}
 
+static int find_value_from_row_id(Tuple_Ptr* Array,int col,uint64_t row_id,int num_of_tuples){
+  for(int i =0;i<num_of_tuples;i++){
+    if(row_id==Array[col][i].row_id)
+      return Array[col][i].element;
+  }
+}
+
+static uint64_t find_row_id(Intermediate_Result_Ptr Intermediate_Result,int relation,int index){
+
+  for(int i=0;i<Intermediate_Result->num_of_relations;i++){
+    if(Intermediate_Result->row_ids[index][i].relation==relation)
+      return Intermediate_Result->row_ids[index][i].row_id;
+  }
+
+}
+
+static RelationPtr Make_Relation_From_Table(Table_Ptr Relations,int rel,int col){
+  int num_of_tuples;
+  Tuple_Ptr* Array = Get_Array_of_data_from_table(Relations,rel,&num_of_tuples);
+  Tuple_Ptr Rel = (Tuple_Ptr)malloc(num_of_tuples* sizeof(struct Tuple));
+
+  for(int i =0;i<num_of_tuples;i++){
+    Rel[i].element=Array[col][i].element;
+    Rel[i].row_id=Array[col][i].row_id;
+  }
+  RelationPtr Final_Relation=Create_Relation_with_given_array(num_of_tuples,Rel);
+  return Final_Relation;
+}
+
+static RelationPtr Make_Relation_From_Intermediate_Array(Table_Ptr Relations,Intermediate_Result_Ptr Intermediate_Result,int rel,int col){
+
+  int num_of_tuples;
+
+  Tuple_Ptr* Array = Get_Array_of_data_from_table(Relations,rel,&num_of_tuples);
+  Tuple_Ptr Rel = malloc(Intermediate_Result->num_of_results* sizeof(struct Tuple));
+
+  for(int i =0;i<Intermediate_Result->num_of_results;i++){
+    Rel[i].row_id=i;
+    uint64_t original_row_id = find_row_id(Intermediate_Result,rel,i);
+    int el = find_value_from_row_id(Array,col,original_row_id,num_of_tuples);
+    Rel[i].element =el;
+  }
+
+  RelationPtr Final_Relation=Create_Relation_with_given_array(num_of_tuples,Rel);
+  return Final_Relation;
+
+}
 
 static void Execute_Self_Join(Join_Ptr Join,Table_Ptr Relations) {
 
@@ -78,13 +118,6 @@ static void Execute_Self_Join(Join_Ptr Join,Table_Ptr Relations) {
 
   free(Old_Array[0]);
   free(Old_Array);
-}
-
-static int find_value_from_row_id(Tuple_Ptr* Array,int col,int row_id,int num_of_tuples){
-  for(int i =0;i<num_of_tuples;i++){
-    if(row_id==Array[col][num_of_tuples].row_id)
-      return Array[col][num_of_tuples].element;
-  }
 }
 
 static int Check_if_relations_already_in_result(Join_Ptr Join,Intermediate_Result_Ptr Intermediate_Result){
@@ -161,28 +194,140 @@ static void Execute_Scan_Join(Join_Ptr Join, Intermediate_Result_Ptr Intermediat
 
 static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermediate_Result, Table_Ptr Relations ){
 
-  //two relations that will be fed into Sort and then JOIN
-  //REL_1,REL_2
+  int rel_1 = Get_Relation_1(Join);
+  int col_1 = Get_Column_1(Join);
+  int rel_2 = Get_Relation_2(Join);
+  int col_2 = Get_Column_2(Join);
+
+  RelationPtr Final_Relation_1,Final_Relation_2;
 
   if(Intermediate_Result->relations_in_result[Get_Relation_1(Join)]==1){
-    // get rel_1 out of intermediate result and make rel_2 out of the table
+
+    Final_Relation_1 = Make_Relation_From_Table(Relations,rel_2,col_2);
+    Final_Relation_2 = Make_Relation_From_Intermediate_Array(Relations,Intermediate_Result,rel_1,col_1);
+
+    if(Final_Relation_1->num_of_tuples==0 || Final_Relation_2->num_of_tuples==0)
+      return;
+
+    Sort(Final_Relation_1);
+    Sort(Final_Relation_2);
+
+
+
+    List_Ptr List=Execute_Join(Final_Relation_1,Final_Relation_2);
+    Delete_Relation(Final_Relation_1);
+    Delete_Relation(Final_Relation_2);
+
+
+    struct Result** result = malloc(Get_num_of_results(List)*sizeof(struct Result*));
+    for(int i =0;i<Get_num_of_results(List);i++)
+      result[i]=malloc((Intermediate_Result->num_of_relations+1)*sizeof(struct Result));
+
+    Node_Ptr temp = Get_head(List);
+
+    int result_counter=0;
+    while (temp!=NULL){
+      for(int i =0;i<temp->counter;i++){
+        int row_in_res = temp->Array[i][0];
+        struct Result* temp_res = Intermediate_Result->row_ids[row_in_res];
+
+        for(int i =0;i<Intermediate_Result->num_of_relations;i++){
+          result[result_counter][i].row_id=temp_res[i].row_id;
+          result[result_counter][i].relation=temp_res[i].relation;
+        }
+
+        result[result_counter][Intermediate_Result->num_of_relations+1].relation=rel_2;
+        result[result_counter][Intermediate_Result->num_of_relations+1].row_id=temp->Array[i][1];
+      }
+      temp=temp->next;
+    }
+
+
+    struct Result** des = Intermediate_Result->row_ids;
+    Intermediate_Result->row_ids=result;
+//    for(int i =0;i<Intermediate_Result->num_of_results;i++){
+//      free(des[i]);
+//    }
+//    free(des);
+
+    Intermediate_Result->num_of_results=Get_num_of_results(List);
+    Intermediate_Result->relations_in_result[rel_2]=1;
+
+
+
+
 
   }
+
+
+
   else if(Intermediate_Result->relations_in_result[Get_Relation_2(Join)]==1){
-    // get rel_2 out of intermediate result and make rel_1 out of the table;
+    Final_Relation_1 = Make_Relation_From_Table(Relations,rel_1,col_1);
+    Final_Relation_2 = Make_Relation_From_Intermediate_Array(Relations,Intermediate_Result,rel_2,col_2);
+
+    if(Final_Relation_1->num_of_tuples==0 || Final_Relation_2->num_of_tuples==0)
+
+
+    Execute_Join(Final_Relation_1,Final_Relation_2);
+    Delete_Relation(Final_Relation_1);
+    Delete_Relation(Final_Relation_2);
   }
+
+
 
   else{
+    Final_Relation_1= Make_Relation_From_Table(Relations,rel_1,col_1);
+    Final_Relation_2= Make_Relation_From_Table(Relations,rel_2,col_2);
 
+    if(Final_Relation_1->num_of_tuples==0 || Final_Relation_2->num_of_tuples==0){
+      Intermediate_Result->row_ids=NULL;
+    }
+
+    Sort(Final_Relation_1);
+    Sort(Final_Relation_2);
+    List_Ptr List = Execute_Join(Final_Relation_1,Final_Relation_2);
+    Delete_Relation(Final_Relation_1);
+    Delete_Relation(Final_Relation_2);
+
+    if(Get_num_of_results(List)==0){
+      Intermediate_Result->row_ids=NULL;
+      return;
+    }
+
+    struct Result** result = malloc(Get_num_of_results(List)*sizeof(struct Result*));
+    for(int i =0;i<Get_num_of_results(List);i++)
+      result[i]=malloc(2*sizeof(struct Result));
+    Node_Ptr temp = Get_head(List);
+
+
+    int result_counter=0;
+    while (temp!=NULL){
+      for(int i =0;i<temp->counter;i++){
+
+        result[result_counter][0].row_id=temp->Array[i][0];
+        result[result_counter][0].relation=rel_1;
+        result[result_counter][1].row_id=temp->Array[i][1];
+        result[result_counter][1].relation=rel_2;
+        result_counter++;
+
+      }
+      temp=temp->next;
+    }
+
+    Intermediate_Result->row_ids=result;
+    Intermediate_Result->num_of_relations=2;
+    Intermediate_Result->num_of_results=Get_num_of_results(List);
+    Intermediate_Result->relations_in_result[rel_1]=1;
+    Intermediate_Result->relations_in_result[rel_2]=1;
   }
 
 
 }
 
 
-void Execute_Joins(Execution_Queue_Ptr Execution_Queue,Table_Ptr Relations){
+Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table_Ptr Relations){
 
-  Intermediate_Result_Ptr Intermediate_Result = NULL;
+  Intermediate_Result_Ptr Intermediate_Result = Create_Intermediate_Result();
   Join_Ptr Last_Join = NULL;
   // we will also keep the element of the last join;
 
@@ -196,15 +341,19 @@ void Execute_Joins(Execution_Queue_Ptr Execution_Queue,Table_Ptr Relations){
     else if(Check_if_relations_already_in_result(Current_Join,Intermediate_Result))
         Execute_Scan_Join(Current_Join,Intermediate_Result,Relations);
 
-    else if (Is_Same_Column_used(Last_Join,Current_Join)){
-
-    }
+//    else if (Is_Same_Column_used(Last_Join,Current_Join)){
+//
+//    }
       //execute join with same column
 
     else{
-     Execute_Normal_Join(Current_Join,Intermediate_Result,Relations)
+      Execute_Normal_Join(Current_Join,Intermediate_Result,Relations);
+//      Print_Intermediate(Intermediate_Result);
+      if(Intermediate_Result->row_ids==NULL)
+        return;
     }
 
   }
+  free(Intermediate_Result);
 
 }

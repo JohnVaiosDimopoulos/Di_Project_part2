@@ -28,7 +28,9 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   Execute_Filters(New_Table, Parsed_Query);
 
   //execute joins
-//  Execute_Joins(Queue,New_Table);
+  Intermediate_Result_Ptr Res = Execute_Joins(Queue,New_Table);
+
+  //do predicates
 
   Delete_Queue(Queue);
   Delete_Parsed_Query(Parsed_Query);
