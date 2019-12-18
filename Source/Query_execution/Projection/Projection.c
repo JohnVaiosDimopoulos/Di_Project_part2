@@ -16,11 +16,11 @@ Projection_Ptr Allocate_Projection_Array(int num_of_projections){
   return proj;
 }
 
-int* Get_Projection_Relation(Projection_Ptr Projection){
+int *Get_Projection_Relation(Projection_Ptr Projection){
   return &(Projection->rel);
 }
 
-int* Get_Projection_Column(Projection_Ptr Projection){
+int *Get_Projection_Column(Projection_Ptr Projection){
   return &(Projection->col);
 }
 
