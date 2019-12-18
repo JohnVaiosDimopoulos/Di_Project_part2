@@ -70,7 +70,15 @@ void Insert_Node(Join_Ptr Join, Execution_Queue_Ptr Execution_Queue){
     Insert_At_End(Join,Execution_Queue);
 }
 
-Join_Ptr Pop_Next_join(Execution_Queue_Ptr Execution_Queue){}
+Join_Ptr Pop_Next_join(Execution_Queue_Ptr Execution_Queue){
+  if(Is_Empty(Execution_Queue))
+    return NULL;
+  Execution_Queue_Node_Ptr temp = Execution_Queue->head;
+  Execution_Queue->head = temp->next;
+  Join_Ptr Join = temp->Join;
+  Delete_Node(temp);
+  return Join;
+}
 
 int Is_in_Queue(Join_Ptr Join_tested,Execution_Queue_Ptr Execution_Queue){
   Execution_Queue_Node_Ptr temp=Execution_Queue->head;

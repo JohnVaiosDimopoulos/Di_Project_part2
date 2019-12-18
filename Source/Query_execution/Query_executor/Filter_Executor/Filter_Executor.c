@@ -2,7 +2,7 @@
 #include "string.h"
 
 struct Tuple{
-  uint64_t data;
+  uint64_t element;
   uint64_t row_id;
 };
 
@@ -32,7 +32,7 @@ static int Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp)
       case '<':
         if(data_to_check < con) {
 	      for(int j =0; j < Get_num_of_columns(Shell); j++) {
-            New[j][cnt].data = data;
+            New[j][cnt].element = data;
             New[j][cnt].row_id = row;
 		  }
           cnt++;
@@ -41,7 +41,7 @@ static int Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp)
       case '>':
         if(data_to_check > con) {
 	      for(int j =0; j < Get_num_of_columns(Shell); j++) {
-            New[j][cnt].data = data;
+            New[j][cnt].element = data;
             New[j][cnt].row_id = row;
 		  }
 	  	cnt++;
@@ -50,7 +50,7 @@ static int Execute(Tuple_Ptr *New, Shell_Ptr Shell, Filter_Ptr Filter, FILE *fp)
       case '=':
         if(data_to_check ==  con) {
 	      for(int j =0; j < Get_num_of_columns(Shell); j++) {
-            New[j][cnt].data = data;
+            New[j][cnt].element = data;
             New[j][cnt].row_id = row;
 		  }
 	  	cnt++;
@@ -93,7 +93,7 @@ void Execute_Filters(Table_Ptr Table, Parsed_Query_Ptr Parsed_Query) {
       for(int i =0; i< tuples; i++){
         for(int j =0; j < num_of_columns; j++){
           fprintf(fp,"(%llu)", New[j][i].row_id);
-          fprintf(fp, "%llu|", New[j][i].data);
+          fprintf(fp, "%llu|", New[j][i].element);
 		}
         fprintf(fp, "\n");
 	  }
