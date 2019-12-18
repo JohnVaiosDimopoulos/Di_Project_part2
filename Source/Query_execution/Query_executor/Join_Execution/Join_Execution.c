@@ -382,7 +382,10 @@ static void Execute_Same_Column_Join(Join_Ptr Current_Join,Join_Ptr Last_Join,In
   List_Ptr List;
 
   if(Intermediate_Result->relations_in_result[rel_1]==1){
-
+    if(rel_1==Get_Relation_1(Last_Join)&&col_1==Get_Column_1(Last_Join))
+      Final_Relation_2=Intermediate_Result->old_Relation1;
+    else
+      Final_Relation_2=Intermediate_Result->old_Relation2;
     Final_Relation_1=Make_Relation_From_Table(Relations,rel_2,col_2);
     if(Final_Relation_1==NULL || Final_Relation_2==NULL){
       Intermediate_Result->row_ids=NULL;
@@ -401,6 +404,11 @@ static void Execute_Same_Column_Join(Join_Ptr Current_Join,Join_Ptr Last_Join,In
   }
   else if (Intermediate_Result->relations_in_result[rel_2]==1){
     Final_Relation_1=  Make_Relation_From_Table(Relations,rel_1,col_1);
+    if(rel_2==Get_Relation_1(Last_Join)&& col_2==Get_Column_1(Last_Join))
+      Final_Relation_2=Intermediate_Result->old_Relation1;
+    else
+      Final_Relation_2=Intermediate_Result->old_Relation2;
+
     if(Final_Relation_1==NULL || Final_Relation_2==NULL){
       Intermediate_Result->row_ids=NULL;
       return;
@@ -434,9 +442,9 @@ Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table
 
     else if(Check_if_relations_already_in_result(Current_Join,Intermediate_Result))
       Execute_Scan_Join(Current_Join, Intermediate_Result, Original_Relations,relation_map);
-//    else if (Is_Same_Column_used(Current_Join,Last_Join)){
-//
-//    }
+    else if (Is_Same_Column_used(Current_Join,Last_Join)){
+      Execute_Same_Column_Join(Current_Join,Last_Join,Intermediate_Result,Filtered_Relations,Original_Relations,relation_map);
+    }
     else{
       Execute_Normal_Join(Current_Join,Intermediate_Result,Filtered_Relations,Original_Relations,relation_map);
       if(Intermediate_Result->row_ids==NULL)
