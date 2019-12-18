@@ -135,17 +135,17 @@ static int Check_if_relations_already_in_result(Join_Ptr Join,Intermediate_Resul
   return 0;
 }
 
-static  Tuple_Ptr  Make_Relation_For_Scan(int relation,int column,Intermediate_Result_Ptr old_result, Table_Ptr Relations){
+static  Tuple_Ptr  Make_Relation_For_Scan(int relation,int column,Intermediate_Result_Ptr old_result, Table_Ptr Relations,int* relations){
 
   int num_of_tuples;
-  Tuple_Ptr* Array = Get_Array_of_data_from_table(Relations,relation,&num_of_tuples);
+  Tuple_Ptr* Array = Get_Array_of_data_from_table(Relations,relations[relation],&num_of_tuples);
   Tuple_Ptr Rel = malloc(old_result->num_of_results*sizeof(struct Tuple));
 
 
   for(int i=0;i<old_result->num_of_results;i++){
     Rel[i].row_id=i;
     uint64_t original_row_id = find_row_id(old_result,relation,i);
-    int el = find_value_from_row_id(Array,column,original_row_id,num_of_tuples);
+    int el = Array[column][original_row_id].element;
     Rel[i].element =el;
   }
   return Rel;
@@ -153,17 +153,16 @@ static  Tuple_Ptr  Make_Relation_For_Scan(int relation,int column,Intermediate_R
 
 static void Execute_Scan_Join(Join_Ptr Join,
                               Intermediate_Result_Ptr Intermediate_Result,
-                              Table_Ptr Relations,
                               Table_Ptr Original_Relations,
                               int *relations_map) {
 
   int rel_1 = Get_Relation_1(Join);
   int col_1 = Get_Column_1(Join);
-  Tuple_Ptr Rel_1 = Make_Relation_For_Scan(rel_1, col_1, Intermediate_Result, Relations);
+  Tuple_Ptr Rel_1 = Make_Relation_For_Scan(rel_1, col_1, Intermediate_Result, Original_Relations,relations_map);
 
   int col_2 = Get_Column_2(Join);
   int rel_2= Get_Relation_2(Join);
-  Tuple_Ptr Rel_2 = Make_Relation_For_Scan(rel_2, col_2, Intermediate_Result, Relations);
+  Tuple_Ptr Rel_2 = Make_Relation_For_Scan(rel_2, col_2, Intermediate_Result, Original_Relations,relations_map);
 
 
   uint64_t* Res = (uint64_t*)malloc(Intermediate_Result->num_of_results* sizeof(uint64_t));
@@ -370,7 +369,7 @@ Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table
       Execute_Self_Join(Current_Join, Filtered_Relations);
 
     else if(Check_if_relations_already_in_result(Current_Join,Intermediate_Result))
-      Execute_Scan_Join(Current_Join, Intermediate_Result, Filtered_Relations, NULL, NULL);
+      Execute_Scan_Join(Current_Join, Intermediate_Result, Original_Relations,relation_map);
 
     else{
       Execute_Normal_Join(Current_Join, Intermediate_Result, Filtered_Relations);
