@@ -7,9 +7,6 @@
 #include <stdlib.h>
 
 
-
-
-
 Intermediate_Result_Ptr Create_Intermediate_Result(){
   Intermediate_Result_Ptr Intermediate_Result = (Intermediate_Result_Ptr)malloc(sizeof(struct Intermediate_Result));
   Intermediate_Result->num_of_results=0;
@@ -242,21 +239,18 @@ static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermedia
       temp=temp->next;
     }
 
+    Delete_List(List);
 
     struct Result** des = Intermediate_Result->row_ids;
     Intermediate_Result->row_ids=result;
-//    for(int i =0;i<Intermediate_Result->num_of_results;i++){
-//      free(des[i]);
-//    }
-//    free(des);
+
+    for(int i =0;i<Intermediate_Result->num_of_results;i++){
+      free(des[i]);
+    }
+    free(des);
 
     Intermediate_Result->num_of_results=Get_num_of_results(List);
     Intermediate_Result->relations_in_result[rel_2]=1;
-
-
-
-
-
   }
 
 
@@ -314,6 +308,8 @@ static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermedia
       temp=temp->next;
     }
 
+    Delete_List(List);
+
     Intermediate_Result->row_ids=result;
     Intermediate_Result->num_of_relations=2;
     Intermediate_Result->num_of_results=Get_num_of_results(List);
@@ -348,12 +344,11 @@ Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table
 
     else{
       Execute_Normal_Join(Current_Join,Intermediate_Result,Relations);
-//      Print_Intermediate(Intermediate_Result);
       if(Intermediate_Result->row_ids==NULL)
-        return;
+        return  NULL;
     }
 
   }
-  free(Intermediate_Result);
+  ;
 
 }
