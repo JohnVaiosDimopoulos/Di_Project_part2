@@ -38,6 +38,7 @@ void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Qu
         for(int k = 0; k < Res->num_of_relations; k++) {
           if(Res->row_ids[0][k].relation == rel) {
 		    index = Res->row_ids[0][k].relation;
+      		printf("index %d\n", index);
 		    break;
 		  }
 		}
