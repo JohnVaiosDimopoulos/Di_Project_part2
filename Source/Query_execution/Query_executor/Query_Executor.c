@@ -1,15 +1,15 @@
 #include "Query_Executor.h"
-#include "../Query_parser/Query_parser.h"
+#include "Projection_Executor/Projection_Executor.h"
+//#include "../Query_parser/Query_parser.h"
 #include "../Preparator/Preparator.h"
 #include "./Filter_Executor/Filter_Executor.h"
-#include "./Join_Execution/Join_Execution.h"
+//#include "./Join_Execution/Join_Execution.h"
 
 
 struct Tuple{
   uint64_t element;
   uint64_t row_id;
 };
-
 
 void Execute_Query(Query_Ptr Query, Table_Ptr Table){
 
@@ -29,16 +29,15 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
 
   //execute joins
   Intermediate_Result_Ptr Res = Execute_Joins(Queue,New_Table);
+  //Print_Intermediate(Res);
 
   //do projections
-  int num_of_proj = Get_Num_of_Projections(Parsed_Query);
-  Projection_Ptr Proj = Get_Projections(Parsed_Query)
-  for(int i = 0; i < num_of_proj; i++) {
-    printf("\n\nproj: %d\n", Proj);
+  Execute_Projections(Res, Parsed_Query, Table);
 
   Delete_Queue(Queue);
   Delete_Parsed_Query(Parsed_Query);
   Delete_Table(New_Table);
+  Delete_intermediate_Result(Res);
 
 
 }

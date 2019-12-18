@@ -7,9 +7,6 @@
 #include <stdlib.h>
 
 
-
-
-
 Intermediate_Result_Ptr Create_Intermediate_Result(){
   Intermediate_Result_Ptr Intermediate_Result = (Intermediate_Result_Ptr)malloc(sizeof(struct Intermediate_Result));
   Intermediate_Result->num_of_results=0;
@@ -19,7 +16,15 @@ Intermediate_Result_Ptr Create_Intermediate_Result(){
   return Intermediate_Result;
 }
 
-static void Print_Intermediate(Intermediate_Result_Ptr Intermediate_Result){
+void Delete_intermediate_Result(Intermediate_Result_Ptr Intermediate_Result){
+  for(int i =0;i<Intermediate_Result->num_of_results;i++){
+    free(Intermediate_Result->row_ids[i]);
+  }
+  free(Intermediate_Result->row_ids);
+  free(Intermediate_Result);
+}
+
+void Print_Intermediate(Intermediate_Result_Ptr Intermediate_Result){
   for(int i =0;i<Intermediate_Result->num_of_results;i++){
     for(int j =0;j<Intermediate_Result->num_of_relations;j++){
       printf("rel:%d,rowId:%llu|",Intermediate_Result->row_ids[i][j].relation,Intermediate_Result->row_ids[i][j].row_id);
@@ -144,6 +149,7 @@ static struct Rel_Tuple* Make_Relation_For_Scan(int relation,int column,Intermed
   return Rel;
 }
 
+
 static void Execute_Scan_Join(Join_Ptr Join, Intermediate_Result_Ptr Intermediate_Result, Table_Ptr Relations){
 
   int rel_1 = Get_Relation_1(Join);
@@ -219,6 +225,8 @@ static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermedia
     Delete_Relation(Final_Relation_2);
 
 
+
+
     struct Result** result = malloc(Get_num_of_results(List)*sizeof(struct Result*));
     for(int i =0;i<Get_num_of_results(List);i++)
       result[i]=malloc((Intermediate_Result->num_of_relations+1)*sizeof(struct Result));
@@ -227,35 +235,37 @@ static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermedia
 
     int result_counter=0;
     while (temp!=NULL){
+
       for(int i =0;i<temp->counter;i++){
         int row_in_res = temp->Array[i][0];
         struct Result* temp_res = Intermediate_Result->row_ids[row_in_res];
 
-        for(int i =0;i<Intermediate_Result->num_of_relations;i++){
-          result[result_counter][i].row_id=temp_res[i].row_id;
-          result[result_counter][i].relation=temp_res[i].relation;
+        for(int j =0;j<Intermediate_Result->num_of_relations;j++){
+          result[result_counter][j].row_id=temp_res[j].row_id;
+          result[result_counter][j].relation=temp_res[j].relation;
         }
 
-        result[result_counter][Intermediate_Result->num_of_relations+1].relation=rel_2;
-        result[result_counter][Intermediate_Result->num_of_relations+1].row_id=temp->Array[i][1];
+        result[result_counter][Intermediate_Result->num_of_relations].relation=rel_2;
+        result[result_counter][Intermediate_Result->num_of_relations].row_id=temp->Array[i][1];
+        result_counter++;
       }
       temp=temp->next;
+
     }
 
+    Delete_List(List);
 
     struct Result** des = Intermediate_Result->row_ids;
     Intermediate_Result->row_ids=result;
-//    for(int i =0;i<Intermediate_Result->num_of_results;i++){
-//      free(des[i]);
-//    }
-//    free(des);
+
+    for(int i =0;i<Intermediate_Result->num_of_results;i++){
+      free(des[i]);
+    }
+    free(des);
 
     Intermediate_Result->num_of_results=Get_num_of_results(List);
     Intermediate_Result->relations_in_result[rel_2]=1;
-
-
-
-
+    Intermediate_Result->num_of_relations++;
 
   }
 
@@ -271,6 +281,9 @@ static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermedia
     Execute_Join(Final_Relation_1,Final_Relation_2);
     Delete_Relation(Final_Relation_1);
     Delete_Relation(Final_Relation_2);
+
+
+
   }
 
 
@@ -314,6 +327,8 @@ static void Execute_Normal_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermedia
       temp=temp->next;
     }
 
+    Delete_List(List);
+
     Intermediate_Result->row_ids=result;
     Intermediate_Result->num_of_relations=2;
     Intermediate_Result->num_of_results=Get_num_of_results(List);
@@ -341,19 +356,13 @@ Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table
     else if(Check_if_relations_already_in_result(Current_Join,Intermediate_Result))
         Execute_Scan_Join(Current_Join,Intermediate_Result,Relations);
 
-//    else if (Is_Same_Column_used(Last_Join,Current_Join)){
-//
-//    }
-      //execute join with same column
-
     else{
       Execute_Normal_Join(Current_Join,Intermediate_Result,Relations);
-//      Print_Intermediate(Intermediate_Result);
       if(Intermediate_Result->row_ids==NULL)
-        return NULL;
+        return  NULL;
     }
 
   }
-  free(Intermediate_Result);
+  return Intermediate_Result;
 
 }
