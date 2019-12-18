@@ -20,7 +20,7 @@ struct Intermediate_Result{
 typedef struct Intermediate_Result* Intermediate_Result_Ptr;
 
 
-Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table_Ptr Relations);
+Intermediate_Result_Ptr Execute_Joins(Execution_Queue_Ptr Execution_Queue, Table_Ptr Filtered_Relations,Table_Ptr,int*);
 void Print_Intermediate(Intermediate_Result_Ptr Intermediate_Result);
 void Delete_intermediate_Result(Intermediate_Result_Ptr Intermediate_Result);
 
