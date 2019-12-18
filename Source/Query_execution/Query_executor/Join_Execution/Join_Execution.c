@@ -155,10 +155,7 @@ static  Tuple_Ptr  Make_Relation_For_Scan(int relation,int column,Intermediate_R
   return Rel;
 }
 
-static void Execute_Scan_Join(Join_Ptr Join,
-                              Intermediate_Result_Ptr Intermediate_Result,
-                              Table_Ptr Original_Relations,
-                              int *relations_map) {
+static void Execute_Scan_Join(Join_Ptr Join,Intermediate_Result_Ptr Intermediate_Result,Table_Ptr Original_Relations,int *relations_map) {
 
   int rel_1 = Get_Relation_1(Join);
   int col_1 = Get_Column_1(Join);
@@ -208,6 +205,9 @@ static void Execute_Scan_Join(Join_Ptr Join,
   free(temp);
 
   Intermediate_Result->num_of_results=num_of_results;
+
+  Intermediate_Result->old_Relation1=Make_Relation_From_Intermediate_Array(Original_Relations,Intermediate_Result,rel_1,col_1,relations_map);
+  Intermediate_Result->old_Relation2=Make_Relation_From_Intermediate_Array(Original_Relations,Intermediate_Result,rel_2,col_2,relations_map);
 }
 
 static void Setup_Intermediate_Result(Intermediate_Result_Ptr Intermediate_Result,List_Ptr List,int new_rel){
@@ -382,10 +382,12 @@ static void Execute_Same_Column_Join(Join_Ptr Current_Join,Join_Ptr Last_Join,In
   List_Ptr List;
 
   if(Intermediate_Result->relations_in_result[rel_1]==1){
-    if(rel_1==Get_Relation_1(Last_Join)&&col_1==Get_Column_1(Last_Join))
+    if(rel_1==Get_Relation_1(Last_Join)&&col_1==Get_Column_1(Last_Join)){
       Final_Relation_2=Intermediate_Result->old_Relation1;
-    else
+    }
+    else{
       Final_Relation_2=Intermediate_Result->old_Relation2;
+    }
     Final_Relation_1=Make_Relation_From_Table(Relations,rel_2,col_2);
     if(Final_Relation_1==NULL || Final_Relation_2==NULL){
       Intermediate_Result->row_ids=NULL;

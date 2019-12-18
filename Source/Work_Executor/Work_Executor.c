@@ -20,12 +20,8 @@ void Start_Work(Table_Ptr Relations,Argument_Data_Ptr Arg_Data){
       fprintf(fp_write, "\n");
       Delete_Query(Current_Query);
       free(Current_Query);
-	  //this break and the next one should not be here
-	  //just for checking
-	  break;
     }
     Delete_Batch(Current_Batch);
-	break;
   }
   fclose(fp_write);
 
