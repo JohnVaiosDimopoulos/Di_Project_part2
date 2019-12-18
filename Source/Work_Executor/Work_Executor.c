@@ -12,19 +12,22 @@ void Start_Work(Table_Ptr Relations,Argument_Data_Ptr Arg_Data){
   Batch_Ptr Current_Batch;
   Query_Ptr Current_Query;
 
+  FILE *fp_write = fopen("Results", "w");
   while((Current_Batch = Read_next_Batch(fp)) != NULL) {
 	while(Get_num_of_Queries(Current_Batch)){
 	  Current_Query = Pop_Next_Query_from_Batch(Current_Batch);
-      Execute_Query(Current_Query, Relations);
+      Execute_Query(Current_Query, Relations, fp_write);
+      fprintf(fp_write, "\n");
       Delete_Query(Current_Query);
       free(Current_Query);
 	  //this break and the next one should not be here
 	  //just for checking
-//	  break;
+	  break;
     }
     Delete_Batch(Current_Batch);
-//	break;
+	break;
   }
+  fclose(fp_write);
 
   free(path);
   fclose(fp);

@@ -4,7 +4,7 @@
 
 
 
-void Execute_Query(Query_Ptr Query, Table_Ptr Table){
+void Execute_Query(Query_Ptr Query, Table_Ptr Table, FILE *fp){
 
   //1.Parse the query
   Parsed_Query_Ptr Parsed_Query = Parse_Query(Query);
@@ -25,7 +25,7 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table){
   //Print_Intermediate(Res);
 
   //do projections
-  Execute_Projections(Res, Parsed_Query, Table);
+  Execute_Projections(Res, Parsed_Query, Table, fp);
 
   Delete_Queue(Queue);
   Delete_Parsed_Query(Parsed_Query);
