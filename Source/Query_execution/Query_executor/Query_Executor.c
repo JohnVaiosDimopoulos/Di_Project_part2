@@ -1,15 +1,8 @@
 #include "Query_Executor.h"
 #include "Projection_Executor/Projection_Executor.h"
-//#include "../Query_parser/Query_parser.h"
 #include "../Preparator/Preparator.h"
-#include "./Filter_Executor/Filter_Executor.h"
-//#include "./Join_Execution/Join_Execution.h"
 
 
-//struct Tuple{
-//  uint64_t element;
-//  uint64_t row_id;
-//};
 
 void Execute_Query(Query_Ptr Query, Table_Ptr Table){
 

@@ -6,12 +6,8 @@
 #include "../Join_Execution/Join_Execution.h"
 #include <stdlib.h>
 
-struct Tuple{
-  uint64_t element;
-  uint64_t row_id;
-};
-
 void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Query, Table_Ptr Table) {
+
 
   int num_of_proj = Get_Num_of_Projections(Parsed_Query);
   Projection_Ptr Proj = Get_Projections(Parsed_Query);
@@ -21,18 +17,13 @@ void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Qu
 	int rel = *Get_Projection_Relation(current_proj);
     int col = *Get_Projection_Column(current_proj);
 
-    printf("\n\nproj: %d.%d, ", rel, col);
 
 	if(Res) {
-
 	  int num_of_res = Res->num_of_results;
-      printf("num of res = %d\n", num_of_res);
       struct Result** row_ids = Res->row_ids;
-      printf("rel in intermediate %d\n", row_ids[0][rel].relation);
 
       int *Relation = Get_Relations(Parsed_Query);
 	  int initial_rel = Relation[rel];
-      printf("rel in original array %d\n", initial_rel);
 
 
 	  Shell_Ptr Shell = Get_Table_Array(Table);
@@ -42,8 +33,7 @@ void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Qu
 
       //if this relation is in the intermediate struct
 	  if(Res->relations_in_result[rel]) {
-        printf("exists -> %d\n", Res->relations_in_result[rel]);
-	    
+
         int index;
         for(int k = 0; k < Res->num_of_relations; k++) {
           if(Res->row_ids[0][k].relation == rel) {
@@ -52,17 +42,14 @@ void Execute_Projections(Intermediate_Result_Ptr Res, Parsed_Query_Ptr Parsed_Qu
 		  }
 		}
 	    //copy result_row_ids
-		uint64_t result_row_ids[num_of_res];
+		uint64_t* result_row_ids=malloc(num_of_res* sizeof(uint64_t));
         for(int j = 0; j < num_of_res; j++){
           result_row_ids[j] = row_ids[j][index].row_id;
-//          printf("row_id (intermdt) %d ", result_row_ids[j]);
 	      Tuple_Ptr current_tuple = Get_Shell_Array_by_index(current_shell, col, result_row_ids[j]);
 	      sum += current_tuple->element;
-//          printf("table-> %llu %llu sum:%llu\n", current_tuple->row_id, current_tuple->element, sum);
       }
-	  // get the sum from the array
+        free(result_row_ids);
 	  } else {
-        
         printf("doesnt exist\n");
 		return;
       }
