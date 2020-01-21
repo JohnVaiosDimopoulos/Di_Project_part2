@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <errno.h>
 #include "Relation_Creator.h"
 #include "../../../../Util/Utilities.h"
 
@@ -8,6 +9,8 @@ RelationPtr Create_Relation(int num_of_elements) {
 
   if(Relation==NULL){
     printf("Memory Allocation error");
+    if(errno == ENOMEM)
+      printf("no more memory\n");
     exit(-1);
   }
 
@@ -24,6 +27,8 @@ RelationPtr Create_Relation_with_given_array(int num_of_elements,Tuple_Ptr Array
   
   if(Relation==NULL){
     printf("Memory Allocation error");
+    if(errno == ENOMEM)
+      printf("no more memory\n");
     exit(-1);
   }
 
@@ -91,10 +96,13 @@ void Delete_Relation(RelationPtr Relation){
   free(Relation);
 }
 
-void Print_Relation(RelationPtr Relation){
+void Print_Relation(RelationPtr Relation, char *name) {
+  FILE* fp;
+  Open_File_for_Write(&fp,name);
   for(int i=0;i<Relation->num_of_tuples;i++){
 //    printf("(Row id: %lu),(Value: %lu)\n",Relation->tuples[i].row_id,Relation->tuples[i].element);
-    printf("%d :(Row id: %llu),(Value: %llu)\n",i,Relation->tuples[i].row_id,Relation->tuples[i].element);
+    fprintf(fp,"%d :(Row id: %llu),(Value: %llu)\n",i,Relation->tuples[i].row_id,Relation->tuples[i].element);
   }
-  printf("\n\n");
+  fprintf(fp,"\n\n");
+  fclose(fp);
 }

@@ -23,7 +23,7 @@ typedef struct Result_List* List_Ptr;
 List_Ptr Create_and_Initialize_List();
 void Insert_Record(List_Ptr List, uint64_t id_1, uint64_t id_2);
 void Delete_List(List_Ptr List);
-void Print_List(List_Ptr List, FILE *fp);
+void Print_List(List_Ptr List, char *name);
 int Get_num_of_results(List_Ptr);
 
 Node_Ptr Get_head(List_Ptr);

@@ -20,6 +20,7 @@ void Execute_Query(Query_Ptr Query, Table_Ptr Table, FILE *fp){
   //execute filters first
   Execute_Filters(New_Table, Parsed_Query);
 
+
   //execute joins
   Intermediate_Result_Ptr Res = Execute_Joins(Queue,New_Table,Table,relations);
   //Print_Intermediate(Res);

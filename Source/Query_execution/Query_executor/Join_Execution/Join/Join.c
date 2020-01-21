@@ -8,7 +8,7 @@ static void Print_Result(List_Ptr List) {
   fclose(fp);
 }
 
-static void Join_Relations(RelationPtr Relation_A, RelationPtr Relation_B, List_Ptr Result_List) {
+static List_Ptr Join_Relations(RelationPtr Relation_A, RelationPtr Relation_B) {
 
   Tuple_Ptr A, B1, B2;
   A = Relation_A->tuples;
@@ -16,9 +16,12 @@ static void Join_Relations(RelationPtr Relation_A, RelationPtr Relation_B, List_
 
   int i = 0;
   int cntA = 0;
+  int cntB1 = 0;
+  int cntB2 = 0;
+
+  List_Ptr Results_List = Create_and_Initialize_List();
 
   while(1) {
-
     if(A->element < B2->element) {
       cntA++;
       if(cntA == Relation_A->num_of_tuples)
@@ -27,36 +30,72 @@ static void Join_Relations(RelationPtr Relation_A, RelationPtr Relation_B, List_
       continue;
     }
     else if(A->element > B2->element) {
-      B2++;
+      cntB2++;
+      //reached end of B with B2
+      //move B2 back to B1
+      if(cntB2 == Relation_B->num_of_tuples) {
+        cntB2 = cntB1;
+        B2 = B1;
+
+        //and move A too
+        cntA++;
+        if(cntA == Relation_A->num_of_tuples)
+          break;
+        A++;
+      }else
+        B2++;
       if(B1->element != B2->element) {
+        cntB1 = cntB2;
         B1 = B2;
       }
       continue;
     }
+
     if(A->element == B2->element) {
-      Insert_Record(Result_List, A->row_id, B2->row_id);
+      Insert_Record(Results_List, A->row_id, B2->row_id);
       i++;
     }
-    B2++;
+
+    cntB2++;
+    //reached end of B with B2
+    //move B2 back to B1
+    if(cntB2 == Relation_B->num_of_tuples) {
+      cntB2 = cntB1;
+      B2 = B1;
+
+      //and move A too
+      cntA++;
+      if(cntA == Relation_A->num_of_tuples)
+        break;
+      A++;
+    } else
+      B2++;
+
+    //if B changed element, move A too
     if(B1->element != B2->element) {
       cntA++;
       if(cntA == Relation_A->num_of_tuples)
         break;
       A++;
+      //if A changed element, move B1 too
       if(A->element != B1->element) {
+        cntB1 = cntB2;
         B1 = B2;
+        //else move B2 back where B1 is
       } else {
+        cntB2 = cntB1;
         B2 = B1;
       }
     }
   }
+  return Results_List;
 }
 
 List_Ptr Execute_Join(RelationPtr Relation_A, RelationPtr Relation_B){
   printf("JOIN\n\n");
-  List_Ptr Result_List = Create_and_Initialize_List();
-  Join_Relations(Relation_A, Relation_B, Result_List);
+  List_Ptr Result_List = Join_Relations(Relation_A, Relation_B);
   printf("JOIN ENDED\n\n");
+
   return Result_List;
 }
 

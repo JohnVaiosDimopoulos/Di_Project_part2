@@ -166,6 +166,7 @@ Table_Ptr Make_Table_For_Joins(Table_Ptr Relations, int* relations,int num_of_re
 
   return New_Table;
 
+
 }
 
 void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
@@ -188,6 +189,7 @@ void Fill_Table(Table_Ptr Table, Table_AllocatorPtr Table_Allocator) {
     free(file_Path);
     free(File_Name);
   }
+  fclose(Init_File);
   free(line_buffer);
   free(Init_File_Path);
 }

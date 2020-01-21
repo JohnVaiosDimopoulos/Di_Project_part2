@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData">
+    <serverData>
+      <paths name="di (a6ed7d07-540d-40bf-b034-74a4eb953d60)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/tmp.ClWHA6VUmf" local="$PROJECT_DIR$/Source" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/Source/cmake-build-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/Source/cmake-build-debug-di" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

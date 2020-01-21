@@ -1,5 +1,6 @@
 #include "Results_List.h"
 #include <stdlib.h>
+#include "../../../../Util/Utilities.h"
 
 
 
@@ -18,10 +19,13 @@ static int Is_Empty(List_Ptr List){
   return 0;
 }
 
-void Print_List(List_Ptr List, FILE *fp) {
+void Print_List(List_Ptr List, char *name) {
+
+  FILE* fp;
+  Open_File_for_Write(&fp,name);
 
   if(Is_Empty(List)){
-    fprintf(fp,"No results found\n");
+    fprintf(name, "No results found\n");
     printf("No results found\n");
     return;
   }
@@ -30,14 +34,13 @@ void Print_List(List_Ptr List, FILE *fp) {
   Node_Ptr node = List->start;
 
   while (node!=NULL){
-    for(int i = 0; i < LIST_SIZE;i++){
-      if(node->Array[i][1] == 0)
-        continue;
+    for(int i = 0; i < node->counter;i++){
       fprintf(fp, "%d: Table1: %llu, Table2: %llu\n", counter, node->Array[i][0], node->Array[i][1]);
       counter++;
     }
     node=node->next;
   }
+  fclose(fp);
 }
 
 
